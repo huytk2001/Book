@@ -1,3 +1,6 @@
 [submodule "Client/book"]
 	path = Client/book
 	url = https://github.com/huytk2001/Book.git
+[submodule "Server"]
+    path = Server
+    url = https://github.com/yourusername/Server.git
