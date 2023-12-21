@@ -30,8 +30,6 @@ export default {
         "theme-border": "#c1c1c1",
         "theme-mxh": "#4a5568",
         "theme-fill": "#ffb321",
-        "theme-color2":
-          "linear-gradient(90.56deg, var(#0e947a) 8.46%, var(#0da487;) 62.97%)",
       },
     },
   },

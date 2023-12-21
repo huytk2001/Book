@@ -3,4 +3,7 @@
 	url = https://github.com/huytk2001/Book.git
 [submodule "Server"]
     path = Server
-    url = https://github.com/yourusername/Server.git
+	url = https://github.com/huytk2001/Book.git
+[submodule "server"]
+	path = server
+	url = https://github.com/huytk2001/Book.git
