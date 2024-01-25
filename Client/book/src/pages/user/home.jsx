@@ -6,7 +6,8 @@ import { useSpring, animated } from "react-spring";
 import Slider1 from "../../assets/images/home-life-1.png";
 import Slider2 from "../../assets/images/home-life-2.png";
 import Product from "./Component/Home/Product";
-
+import ProductCategory from "./Component/Home/ProductCategory";
+import ProductHot from "./Component/Home/ProductHot";
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [Slider1, Slider2];
@@ -82,7 +83,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <ProductCategory />
       <Product />
+      <ProductHot />
       <Footer />
     </>
   );

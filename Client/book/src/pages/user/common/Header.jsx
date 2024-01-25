@@ -1,10 +1,23 @@
 import Logo from "../../../assets/images/Logo.png";
 import { Search, ShoppingCart, User, ChevronDown } from "react-feather";
 import { Link } from "react-router-dom";
+import BgBook5 from "../../../assets/images/damnghi.jpg";
 
+import { PhoneCall } from "react-feather";
+import { Heart } from "react-feather";
 import { useState } from "react";
 import ButtonAllCategory from "../Component/ButtonAllCategory";
 export default function Header() {
+  const [isHover, SetIsHover] = useState(false);
+
+  const handleMouseEnter = () => {
+    SetIsHover(true);
+  };
+
+  const handleMouseLeave = () => {
+    SetIsHover(false);
+  };
+
   return (
     <div className="header w-full h-auto ">
       <div className="w-full bg-theme-color">
@@ -26,12 +39,12 @@ export default function Header() {
 
           {/* Right section (Account) */}
           <div className="account flex justify-end items-center">
-            <div className="relative group">
+            <div className="relative group z-10">
               <Link to="/account" className="flex items-center">
                 <User name="cart" size={24} color="white" />
                 <h1 className="text-[14px] text-white ml-1">My Account</h1>
               </Link>
-              <div className="user-options absolute top-full right-0 bg-white p-3 rounded-[5px] shadow-lg hidden opacity-0 group-hover:block group-hover:opacity-100 transition-opacity duration-300">
+              <div className="user-options    absolute top-full right-0 bg-white p-3 rounded-[5px] shadow-lg hidden opacity-0 group-hover:block group-hover:opacity-100 transition-opacity duration-300">
                 <div className="flex flex-col gap-3 w-[120px]">
                   <Link
                     className="text-[14px] text-textGray hover:text-primaryGreen"
@@ -40,7 +53,7 @@ export default function Header() {
                     Đăng nhập
                   </Link>
                   <Link
-                    className="text-[14px] text-textGray hover:text-primaryGreen"
+                    className="text-[14px] text-textGray hover:text-primaryGreen "
                     to="/register/user"
                   >
                     Đăng ký
@@ -81,8 +94,61 @@ export default function Header() {
                 </button>
               </form>
             </div>
-            <div className="relative flex justify-center">
-              <ShoppingCart name="cart" size={24} color="black" />{" "}
+            <div className="header-center-right flex justify-center item-center gap-[15px]">
+              <Link>
+                <PhoneCall name="phone" size={24} color="black" />
+              </Link>
+              |
+              <Link>
+                <Heart name="heart" size={24} color="black" />
+              </Link>
+              |
+              <div
+                className="relative group"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <ShoppingCart name="cart" size={24} color="black" />{" "}
+                <div className=" absolute top-[-12px] left-[14px] w-[22px] h-[22px] flex justify-center items-center rounded-[4px] bg-secondaryRed  ">
+                  <span className="text-[12px] text-white font-semibold">
+                    2
+                  </span>
+                </div>
+                {isHover && (
+                  <div className="bg-white rounded-md shadow-md z-30 absolute top-[26px] right-[-70px] p-4 w-[300px] pointer-events-auto">
+                    <div className="flex items-center mb-2 pb-2 ">
+                      <img
+                        src={BgBook5}
+                        className="w-16 h-16 object-contain mr-2 border "
+                      />
+                      <div className="flex items-center ">
+                        <p className="text-[16px] font-bold text-theme-color">
+                          Sach
+                        </p>
+                        <p className="text-[14px] text-textGray font-[500]">
+                          222
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center pb-2 border-t border-b">
+                      <p className="text-[16px] text-textGray font-medium">
+                        Tổng tiền
+                      </p>
+                      <p className="text-[18px] text-theme-color font-bold">
+                        1
+                      </p>
+                    </div>
+                    <div className="flex justify-between pb-2 pt-2">
+                      <button className="text-theme-color text-[16px] border-[2px] border-theme-color px-[12px] py-[6px] hover:bg-theme-color hover:text-white transition">
+                        Giỏ hàng
+                      </button>
+                      <button className="text-white text-[16px] border-[2px] border-theme-color  bg-theme-color  px-[12px] py-[6px]  transition  hover:bg-white hover:text-theme-color">
+                        Thanh toán
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

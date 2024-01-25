@@ -4,8 +4,8 @@ import BgBook2 from "../../../../assets/images/NoelDay.jpg";
 import BgBook3 from "../../../../assets/images/nxbtr.jpg";
 import BgBook4 from "../../../../assets/images/nglbn.jpg";
 import BgBook5 from "../../../../assets/images/damnghi.jpg";
-
-export default function Product() {
+import BgLogo from "../../../../assets/images/icon_dealhot_new.png";
+export default function ProductHot() {
   const [activeCategory, setActiveCategory] = useState("newProducts");
 
   const products = {
@@ -30,23 +30,25 @@ export default function Product() {
     setActiveCategory(category);
   };
   return (
-    <section className="py-[30px] product-selection relative ">
-      <div className="w-[1280px] h-auto relative m-auto flex items-center justify-between bg-white py-3">
-        <div className="w-full flex flex-col justify-center items-center">
-          <div className="title-product ">
-            <h4 className="text-theme-color text-[18px] uppercase font-[400] pb-[10px] text-center">
-              SẢN PHẨM ĐỘC QUYỀN
-            </h4>
-            <h2 className="text-text2222 font-[700] text-[36px] uppercase px-1 text-center leading-none tracking-wide border-b-[4px] border-theme-color mb-[50px]">
-              SẢN PHẨM ĐẶC BIỆT
-            </h2>
+    <section className="py-[30px] bg-textbg relative ">
+      <div className="w-[1280px] h-auto m-auto flex items-center  bg-white  rounded-xl">
+        <div className="w-full flex flex-col  ">
+          <div className="title-product flex  items-center py-3 pl-4 bg-texthot  rounded-tr-[8px] rounded-tl-lg ">
+            <img className="w-8 h-8 mr-4 " src={BgLogo} />
+            <span className="text-[18px] uppercase font-[600] ">
+              xu hướng mua sắm
+            </span>
           </div>
           <div>
-            <ul className="flex flex-wrap gap-5">
+            <ul className="flex flex-wrap gap-5 pl-4 border-b">
               <li
                 className={`text-${
                   activeCategory === "newProducts" ? "theme-color" : "black"
-                } text-[18px] uppercase font-[500] pb-[10px] cursor-pointer`}
+                } mr-10 text-[14px] uppercase font-[500] py-[10px] cursor-pointer ${
+                  activeCategory === "newProducts"
+                    ? "border-b-2 border-theme-color"
+                    : ""
+                } `}
                 onClick={() => handleCategoryClick("newProducts")}
               >
                 Sản phẩm mới
@@ -56,10 +58,14 @@ export default function Product() {
                   activeCategory === "featuredProducts"
                     ? "theme-color"
                     : "black"
-                } text-[18px] uppercase font-[500] pb-[10px] cursor-pointer`}
+                } mr-10 text-[14px] uppercase font-[500] py-[10px] cursor-pointer ${
+                  activeCategory === "featuredProducts"
+                    ? "border-b-2 border-theme-color"
+                    : ""
+                }`}
                 onClick={() => handleCategoryClick("featuredProducts")}
               >
-                Sản phẩm tiêu biểu
+                sách hôt giảm sốc
               </li>
             </ul>
           </div>

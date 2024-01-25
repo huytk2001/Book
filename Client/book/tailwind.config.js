@@ -22,6 +22,9 @@ export default {
         text7777: "#777",
         textddd: "#ddd",
         textwhite: "#fff",
+        textred: "#C92127",
+        textbg: "#f0f0f0",
+        texthot: "#FCDDEF",
         "theme-color": "#5ecee4",
         "them-gray": "#f8f8f8",
         "theme-color2":
