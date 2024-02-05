@@ -35,6 +35,14 @@ exports.delete_book = function (req, res) {
     }
   });
 };
+exports.update_book = function (req, res) {
+  const data = req.body;
+
+  Book.update(data, function (response) {
+    res.send({ result: response });
+  });
+};
+
 // exports.delete_book = function (req, res) {
 //   var id = req.params.id;
 //   Book.remove(id, function (response) {

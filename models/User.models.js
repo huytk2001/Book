@@ -42,6 +42,9 @@ User.get_all = function (result) {
 User.getById = function (id, result) {
   console.log(id);
   db.query("SELECT *FROM users WHERE id = ? ", id, function (err, users) {
+    console.log("====================================");
+    console.log(err);
+    console.log("====================================");
     if (err) {
       return null;
     } else {

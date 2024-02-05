@@ -45,4 +45,24 @@ Book.remove = function (id, result) {
   });
 };
 
+Book.update = function (d, result) {
+  console.log("====================================");
+  console.log(d);
+  console.log("====================================");
+  db.query(
+    "UPDATE book SET name=?, image=?, author_id=? WHERE id = ?",
+    [d.name, d.image, d.author_id, d.id],
+    function (err, products) {
+      console.log("====================================");
+      console.log(err);
+      console.log("====================================");
+      if (err) {
+        result(err);
+      } else {
+        result(products);
+      }
+    }
+  );
+};
+
 module.exports = Book;
