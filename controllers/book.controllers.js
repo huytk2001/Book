@@ -16,7 +16,7 @@ exports.add_book = function (req, res) {
   const data = req.body;
   Book.create(data, function (err, response) {
     if (err) {
-      res.status(500).send({ error: err.message }); // Fixing the typo here
+      res.status(500).json({ error: err.message }); // Fixing the typo here
     } else {
       res.status(200).send({ result: response });
     }

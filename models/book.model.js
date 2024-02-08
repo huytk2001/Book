@@ -4,10 +4,15 @@ const Book = function (book) {
   this.id = book.id;
   this.name = book.name;
   this.image = book.image;
+  this.description = book.description;
+  this.price = book.price;
+  this.unit = book.unit;
+  this.quantity = book.quantity;
+  this.userId = book.userId;
   this.author_id = book.author_id;
 };
 //  toan
-Book.get_all = function (result) {
+Book.get_all = async function (result) {
   db.query("SELECT * FROM book", function (err, books) {
     if (err) {
       console.error("Error retrieving data from the database:", err);
@@ -17,7 +22,8 @@ Book.get_all = function (result) {
     }
   });
 };
-Book.getById = function (id, result) {
+
+Book.getById = async function (id, result) {
   db.query("SELECT * FROM book WHERE id = ?", id, function (err, books) {
     if (err) {
       return null;

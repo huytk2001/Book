@@ -1,3 +1,5 @@
+// app.js
+
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -12,14 +14,29 @@ const port = process.env.PORT || 3000;
 const morgan = require("morgan");
 const bookRouter = require("./views/book.router");
 const userRouter = require("./views/user.router");
+const multer = require("multer");
+const flash = require("connect-flash");
+const session = require("express-session");
 
-app.use(morgan("dev"));
+app.use("/uploads", express.static("uploads"));
 app.use(morgan("combined"));
 app.use(express.json());
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-app.use(bodyParser.urlencoded({ extended: true }));
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now() + ".png");
+  },
+});
+
+app.use(cors());
+app.use(session({ secret: "GJDMLAA", cookie: { maxAge: 60000 } }));
+app.use(flash());
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(
@@ -28,7 +45,6 @@ app.use((req, res, next) => {
   );
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  // Xử lý yêu cầu OPTIONS
   if (req.method === "OPTIONS") {
     return res.sendStatus(200);
   }
@@ -53,7 +69,12 @@ app.use((req, res, next) => {
 
 app.use(bookRouter);
 app.use(userRouter);
-app.use(cookieParser());
+app.use(cookieParser("GJDMLAA"));
+app.get("/", (req, res) => {
+  res.send({
+    message: "Hello Backend",
+  });
+});
 
 app.listen(port, hostname, (err) => {
   if (err) {

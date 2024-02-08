@@ -1,55 +1,115 @@
+// User.models.js
+
 const db = require("../config/database");
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 const User = function (users) {
   this.id = users.id;
   this.name = users.name;
   this.email = users.email;
   this.password = users.password;
+  this.role = users.role;
+  this.dateJoin = users.dateJoin;
+  this.status = users.status;
 };
 
-User.create = function (data, result) {
-  // Hash mật khẩu trước khi lưu vào cơ sở dữ liệu
-  bcrypt.hash(data.password, 10, function (err, hashedPassword) {
-    if (err) {
-      return result(err);
+User.create = async function (data, result) {
+  try {
+    const [existingUser] = await db
+      .promise()
+      .execute("SELECT * FROM users WHERE email = ?", [data.email]);
+    if (existingUser.length > 0) {
+      return result({ message: "Email đã được sử dụng" });
     }
 
-    // Thêm mật khẩu đã băm vào đối tượng người dùng mới
+    const hashedPassword = await bcrypt.hash(data.password, 10);
     data.password = hashedPassword;
 
-    // Thực hiện truy vấn SQL để thêm người dùng mới vào cơ sở dữ liệu
+    // Tạo mã token
+
+    // Lưu thông tin người dùng vào cơ sở dữ liệu
     db.query("INSERT INTO users SET ?", data, function (err, users) {
       if (err) {
-        return result(err);
+        result(err);
       } else {
-        // Gọi callback với kết quả, bao gồm ID mới được chèn và dữ liệu người dùng
         result(null, { id: users.insertId, ...data });
       }
     });
-  });
+  } catch (err) {
+    console.error("Error in create", err);
+    result(err);
+  }
+};
+User.findByEmail = async function (email, callback) {
+  try {
+    if (typeof callback !== "function") {
+      throw new TypeError("Callback is not a function");
+    }
+
+    const query = "SELECT * FROM users WHERE email = ?";
+    db.query(query, [email], function (err, result) {
+      if (err) {
+        console.error("Error in findByEmail:", err);
+        return callback(err, null);
+      }
+      return callback(null, result);
+    });
+  } catch (error) {
+    console.error("Error in findByEmail:", error);
+    throw error;
+  }
+};
+User.check_login = async function (data, result) {
+  try {
+    db.query(
+      "SELECT * FROM users WHERE email = ? AND password = ?",
+      [data.email, data.password],
+      async function (err, users) {
+        if (err) {
+          console.error("Error in check_login:", err);
+          return result(null); // Trả về null nếu có lỗi xảy ra
+        } else if (users.length === 0) {
+          return result(null); // Trả về null nếu không tìm thấy người dùng
+        } else {
+          const user = users[0];
+          const token = jwt.sign(
+            {
+              id: user.id,
+              email: user.email,
+              role: user.role,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+          );
+          return result({ user, token }); // Trả về thông tin người dùng và mã token nếu tìm thấy
+        }
+      }
+    );
+  } catch (err) {
+    console.error("Error in check_login:", err);
+    result(null);
+  }
+};
+User.get_all = async function () {
+  try {
+    const [rows] = await db.promise().query("SELECT * FROM users");
+    return rows;
+  } catch (error) {
+    console.error("Error in get_all:", error);
+    throw error;
+  }
 };
 
-User.get_all = function (result) {
-  db.query("SELECT * FROM users", function (err, users) {
-    if (err) {
-      return result(err, null);
-    } else {
-      return result(null, users);
-    }
-  });
+User.getById = async function (id) {
+  try {
+    const [rows] = await db
+      .promise()
+      .execute("SELECT * FROM users WHERE id = ?", [id]);
+    return rows[0];
+  } catch (error) {
+    console.error("Error in getById:", error);
+    throw error;
+  }
 };
-User.getById = function (id, result) {
-  console.log(id);
-  db.query("SELECT *FROM users WHERE id = ? ", id, function (err, users) {
-    console.log("====================================");
-    console.log(err);
-    console.log("====================================");
-    if (err) {
-      return null;
-    } else {
-      return users;
-    }
-  });
-};
+
 module.exports = User;
