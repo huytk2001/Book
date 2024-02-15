@@ -1,5 +1,3 @@
-// app.js
-
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -18,21 +16,11 @@ const multer = require("multer");
 const flash = require("connect-flash");
 const session = require("express-session");
 
-app.use("/uploads", express.static("uploads"));
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now() + ".png");
-  },
-});
-
+app.use(express.static("public"));
 app.use(cors());
 app.use(session({ secret: "GJDMLAA", cookie: { maxAge: 60000 } }));
 app.use(flash());
@@ -51,7 +39,27 @@ app.use((req, res, next) => {
 
   next();
 });
+// Tạo middleware để lưu trữ ảnh tải lên vào thư mục "uploads"
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + "-" + Date.now() + ".png");
+  },
+});
+const upload = multer({ storage: storage });
 
+// // Route để xử lý tải ảnh lên và lưu vào thư mục "uploads"
+app.post("/uploads", upload.single("image"), (req, res) => {
+  const file = req.file;
+  if (!req.file) {
+    return res.status(400).json({ error: "Không tìm thấy hình ảnh" });
+  }
+  const imageFileName = req.file.filename;
+  const imagePath = `uploads/${imageFileName}`;
+  res.json(imagePath);
+});
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:4000");
   res.setHeader(
@@ -67,13 +75,16 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use("/uploads", express.static("uploads"));
 app.use(bookRouter);
 app.use(userRouter);
 app.use(cookieParser("GJDMLAA"));
-app.get("/", (req, res) => {
-  res.send({
-    message: "Hello Backend",
-  });
+
+app.get("//", (req, res) => {
+  res.render("home");
+});
+app.get("/", function (req, res) {
+  res.render("home");
 });
 
 app.listen(port, hostname, (err) => {
