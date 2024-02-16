@@ -5,16 +5,18 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const methodOverride = require("method-override");
-const database = require("./config/database");
+const database = require("./public/config/database");
 const hostname = process.env.DB_HOST;
 const app = express();
 const port = process.env.PORT || 3000;
 const morgan = require("morgan");
-const bookRouter = require("./views/book.router");
-const userRouter = require("./views/user.router");
+const bookRouter = require("./public/views/book.router");
+const userRouter = require("./public/views/user.router");
 const multer = require("multer");
 const flash = require("connect-flash");
+const db = require("./public/config/database");
 const session = require("express-session");
+app.set("views", "./public/views");
 
 app.use(morgan("combined"));
 app.use(express.json());
@@ -42,7 +44,7 @@ app.use((req, res, next) => {
 // Tạo middleware để lưu trữ ảnh tải lên vào thư mục "uploads"
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, "public/uploads/");
   },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + "-" + Date.now() + ".png");
@@ -87,6 +89,62 @@ app.get("/", function (req, res) {
   res.render("home");
 });
 
+app.get("/categories", function (req, res) {
+  db.query("SELECT * FROM categories ORDER BY id DESC", function (err, data) {
+    res.render("categories", {
+      title: "Quản lý danh mục",
+      data: data,
+      totalPage: 10,
+    });
+  });
+});
+
+// app.get("/categories-delete/:id ", function (req, res) {
+//   let id = req.params.id;
+//   let sql_delete = "DELETE FROM categories WHERE id = ?";
+//   db.query(sql_delete, [id], function (err, data) {
+//     if (err) {
+//       res.render("error", {
+//         message: err.sqlMessage,
+//         code: err.errno,
+//       });
+//     } else {
+//       res.redirect("/categories");
+//     }
+//   });
+// });
+app.get("/categories-delete/:id", function (req, res) {
+  let id = req.params.id;
+
+  // Xóa tất cả các hình ảnh của sách trong bảng book_images
+  let sql_delete_images =
+    "DELETE FROM book_images WHERE book_id IN (SELECT id FROM book WHERE categoryID = ?)";
+  db.query(sql_delete_images, [id], function (err, result) {
+    if (err) {
+      res.render("error", {
+        message: err.sqlMessage,
+        code: err.errno,
+      });
+    } else {
+      // Tiếp tục xóa danh mục sách trong bảng categories sau khi đã xóa hình ảnh
+      let sql_delete_category = "DELETE FROM categories WHERE id = ?";
+      db.query(sql_delete_category, [id], function (err, data) {
+        if (err) {
+          res.render("error", {
+            message: err.sqlMessage,
+            code: err.errno,
+          });
+        } else {
+          res.redirect("/categories");
+        }
+      });
+    }
+  });
+});
+
+app.get("/add/categories", function (req, res) {
+  res.render("categories-add");
+});
 app.listen(port, hostname, (err) => {
   if (err) {
     console.error(`Error starting the server: ${err}`);
