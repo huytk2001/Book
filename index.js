@@ -8,6 +8,7 @@ const methodOverride = require("method-override");
 const database = require("./public/config/database");
 const hostname = process.env.DB_HOST;
 const app = express();
+const util = require("node:util");
 const port = process.env.PORT || 3000;
 const morgan = require("morgan");
 const bookRouter = require("./public/views/book.router");
@@ -16,11 +17,13 @@ const multer = require("multer");
 const flash = require("connect-flash");
 const db = require("./public/config/database");
 const session = require("express-session");
+const { start } = require("node:repl");
+const query = util.promisify(db.query).bind(db);
 app.set("views", "./public/views");
 
 app.use(morgan("combined"));
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(cors());
@@ -89,14 +92,99 @@ app.get("/", function (req, res) {
   res.render("home");
 });
 
-app.get("/categories", function (req, res) {
-  db.query("SELECT * FROM categories ORDER BY id DESC", function (err, data) {
+// app.get("/categories", function (req, res) {
+//   let sql = "SELECT * FROM categories";
+//   let _name = req.query.name;
+//   if (_name) {
+//     sql += " WHERE name LIKE '%?%'";
+//   }
+//   sql += " ORDER BY id DESC";
+//   console.log(sql);
+//   db.query(sql, [_name], function (err, data) {
+//     res.render("categories", {
+//       title: "Quản lý danh mục",
+//       data: data,
+//       totalPage: 10,
+//     });
+//   });
+// });
+// app.get("/categories", async function (req, res) {
+//   let sql = "SELECT * FROM categories";
+//   let _name = req.query.name;
+//   // Lấy trang hiện tại: 1,2,3
+//   let _page = req.query.page ? req.query.page : 1;
+//   let limit = 5;
+//   let _start = (_page - 1) * limit;
+
+//   // Thực hiện truy vấn để lấy tổng số hàng
+//   let rowData = await query("SELECT COUNT(*) as total FROM categories");
+//   let totalRow = rowData[0].total;
+//   let totalPage = Math.ceil(totalRow / limit);
+//   _page = _page > 0 ? Math.floor(_page) : 1;
+//   _page = _page <= totalPage ? Math.floor(_page) : totalPage;
+//   if (_name) {
+//     sql += " WHERE name LIKE '%" + _name + "%'";
+//     // _name = "%" + _name + "%"; // Thêm dấu % ở đầu và cuối chuỗi để tìm kiếm một phần của tên
+//   }
+
+//   sql += " ORDER BY id DESC LIMIT " + _start + "," + limit;
+//   console.log(sql);
+
+//   // Thực hiện truy vấn chính và gửi phản hồi khi kết thúc
+//   db.query(sql, function (err, data) {
+//     if (err) {
+//       console.error(err);
+//       res.status(500).send("Internal Server Error");
+//     } else {
+//       res.render("categories", {
+//         title: "Quản lý danh mục",
+//         data: data,
+//         totalPage: totalPage,
+//         _page: parseInt(_page),
+//       });
+//     }
+//   });
+// });
+app.get("/categories", async function (req, res) {
+  try {
+    let sql = "SELECT * FROM categories";
+    let _name = req.query.name;
+    let _page = req.query.page ? parseInt(req.query.page) : 1;
+    let limit = 5;
+    let _start = (_page - 1) * limit;
+
+    // Xây dựng truy vấn SQL chính
+    if (_name) {
+      sql += " WHERE name LIKE '%" + _name + "%'";
+    }
+
+    // Truy vấn để lấy tổng số hàng
+    let sql_total = "SELECT COUNT(*) as total FROM categories";
+    let rowData = await query(sql_total);
+    let totalRow = rowData[0].total;
+    let totalPage = Math.ceil(totalRow / limit);
+
+    // Điều chỉnh số trang
+    _page = _page > 0 ? Math.min(_page, totalPage) : 1;
+
+    // Sửa đổi truy vấn SQL cho phân trang
+    sql += " ORDER BY id ASC LIMIT ?, ?";
+    let params = [_start, limit];
+
+    // Thực hiện truy vấn SQL chính
+    let data = await query(sql, params);
+
     res.render("categories", {
       title: "Quản lý danh mục",
-      data: data,
-      totalPage: 10,
+      data: data ? data : [],
+      totalPage: totalPage,
+      _page: parseInt(_page),
+      _name: _name,
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Lỗi máy chủ nội bộ");
+  }
 });
 
 // app.get("/categories-delete/:id ", function (req, res) {
@@ -144,6 +232,27 @@ app.get("/categories-delete/:id", function (req, res) {
 
 app.get("/add/categories", function (req, res) {
   res.render("categories-add");
+});
+app.post("/add/categories", function (req, res) {
+  let sql = "INSERT INTO categories SET ?";
+  db.query(sql, req.body, (err, data) => {
+    if (err) {
+      let msg = "";
+      if (err.errno == 1451) {
+        msg = "Danh muc dang co san pham";
+      } else if (err.errno == 2000) {
+        msg = "ten danh muc bi trung";
+      } else {
+        msg = "Da co loi";
+      }
+      res.render("error", {
+        message: msg,
+        code: err.errno,
+      });
+    } else {
+      res.redirect("/categories");
+    }
+  });
 });
 app.listen(port, hostname, (err) => {
   if (err) {

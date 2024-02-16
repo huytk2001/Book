@@ -12,8 +12,8 @@
       <div class="box-header with-border">
         <div class="box-body" style="padding-bottom: 20px">
           <form
-            action=""
-            method="POST"
+            action="/categories"
+            method="get"
             class="form-inline"
             role="form"
             style="margin-bottom: 20px"
@@ -23,10 +23,9 @@
                 >Email address</label
               >
               <input
-                type="email"
+                name="name"
                 class="form-control"
-                id="exampleInputEmail2"
-                placeholder="Enter email"
+                placeholder="Input field"
               />
             </div>
             <button type="submit" class="btn btn-primary">
@@ -78,13 +77,32 @@
         <!-- /.box-body -->
         <div class="box-footer" style="padding-top: 20px">
           <ul class="pagination" style="margin: 0">
-            <li><a href="#">&laquo;</a></li>
-            <% for(i=1;i< totalPage;i++){ %>
-            <li><a href="#"><%=i%></a></li>
-
-            <%}%>
-
-            <li><a href="#">&raquo;</a></li>
+            <li>
+              <!-- Nút "Trang trước" -->
+              <a href="/categories?page=<%= _page > 1 ? _page - 1 : 1 %>"
+                >&laquo;</a
+              >
+            </li>
+            <% for (let i = 0; i < totalPage; i++) { %> <% if (_name) { %>
+            <li class="<%= _page === i + 1 ? 'active' : '' %>">
+              <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
+              <a href="/categories?page=<%= i + 1 %>&name=<%= _name %>"
+                ><%= i + 1 %></a
+              >
+            </li>
+            <% } else { %>
+            <li class="<%= _page === i + 1 ? 'active' : '' %>">
+              <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
+              <a href="/categories?page=<%= i + 1 %>"><%= i + 1 %></a>
+            </li>
+            <% } %> <% } %>
+            <li>
+              <!-- Nút "Trang kế tiếp" -->
+              <a
+                href="/categories?page=<%= _page < totalPage ? _page + 1 : totalPage %>"
+                >&raquo;</a
+              >
+            </li>
           </ul>
         </div>
       </div>
