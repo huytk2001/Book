@@ -177,6 +177,11 @@
                       class="img-circle"
                       alt="User Image"
                     />
+
+                    <p>
+                      <%=account.name%> - Web Developer
+                      <small>Member since Nov. 2012</small>
+                    </p>
                   </li>
                   <!-- Menu Body -->
                   <li class="user-body">
@@ -214,138 +219,98 @@
           </div>
         </nav>
       </header>
-      %> <%- include('aside') %>
+      <%- include('aside.ejs') %>
 
       <div class="content-wrapper">
         <section class="content-header">
-          <h1>
-            <i class="fa fa-th"></i>
-            <%= title %>
-          </h1>
+          <h1>Chỉnh sữa thông tin người dùng</h1>
         </section>
         <section class="content">
           <div class="box">
-            <div class="box-header with-border">
-              <div class="box-body" style="padding-bottom: 20px">
+            <div class="row">
+              <div class="col-md-6" style="padding: 20px">
                 <form
-                  action="/categories"
-                  method="get"
-                  class="form-inline"
+                  action=""
+                  method="POST"
                   role="form"
-                  style="margin-bottom: 20px"
+                  enctype="multipart/form-data"
                 >
                   <div class="form-group">
-                    <label class="sr-only" for="exampleInputEmail2"
-                      >Email address</label
-                    >
+                    <label for="name">Tên người dùng</label>
                     <input
-                      name="name"
+                      type="text"
                       class="form-control"
-                      placeholder="Input field"
+                      id="name"
+                      name="name"
+                      value="<%= cat.name %>"
+                      placeholder="Nhập tên danh mục"
                     />
                   </div>
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fa fa-search"></i>
-                  </button>
-                  <a
-                    href="/add/categories"
-                    class="btn btn-success pull-right"
-                    style="margin-left: 10px"
-                  >
-                    <i class="fa fa-plus"></i> Thêm mới</a
-                  >
-                </form>
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Id</th>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Image</th>
-                      <th>Quantity</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <% data.map(function(cat) { %>
-                    <tr>
-                      <td><%= cat.id %></td>
-                      <td><%= cat.name %></td>
-                      <td><%= cat.description %></td>
-                      <td>
-                        <% if (cat.image) { %>
-                        <img
-                          width="60"
-                          src="uploads/<%= cat.image %>"
-                          alt="Hình ảnh"
-                          style="max-width: 100%; height: auto"
-                        />
-                        <% } %>
-                      </td>
 
-                      <td><%= cat.quantity %></td>
-                      <td class="text-right">
-                        <a
-                          href="/categories-edit/<%= cat.id %>"
-                          class="btn btn-sm btn-primary"
-                        >
-                          <i class="fa fa-edit"></i> Sửa
-                        </a>
-                        <a
-                          href="/categories-delete/<%= cat.id %>"
-                          class="btn btn-sm btn-danger"
-                        >
-                          <i class="fa fa-trash"></i> Xóa
-                        </a>
-                      </td>
-                    </tr>
-                    <% }) %>
-                  </tbody>
-                </table>
+                  <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="description"
+                      name="phone"
+                      value="<%= cat.phone%>"
+                      placeholder="Nhập mô tả"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label>Địa chỉ</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="shipping_address"
+                      value="<%= cat.shipping_address%>"
+                      placeholder="Nhập mô tả"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="image">Hình ảnh:</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="image"
+                      name="image"
+                      onchange="showImage(this)"
+                    />
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-save"></i> Lưu lại
+                  </button>
+                  <a href="/user" class="btn btn-default">
+                    <i class="fa fa-arrow-left"></i> Quay lại
+                  </a>
+                </form>
               </div>
-              <!-- /.box-body -->
-              <div class="box-footer" style="padding-top: 20px">
-                <ul class="pagination" style="margin: 0">
-                  <li>
-                    <!-- Nút "Trang trước" -->
-                    <a href="/categories?page=<%= _page > 1 ? _page - 1 : 1 %>"
-                      >&laquo;</a
-                    >
-                  </li>
-                  <% for (let i = 0; i < totalPage; i++) { %> <% if (_name) { %>
-                  <li class="<%= _page === i + 1 ? 'active' : '' %>">
-                    <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
-                    <a href="/categories?page=<%= i + 1 %>&name=<%= _name %>"
-                      ><%= i + 1 %></a
-                    >
-                  </li>
-                  <% } else { %>
-                  <li class="<%= _page === i + 1 ? 'active' : '' %>">
-                    <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
-                    <a href="/categories?page=<%= i + 1 %>"><%= i + 1 %></a>
-                  </li>
-                  <% } %> <% } %>
-                  <li>
-                    <!-- Nút "Trang kế tiếp" -->
-                    <a
-                      href="/categories?page=<%= _page < totalPage ? _page + 1 : totalPage %>"
-                      >&raquo;</a
-                    >
-                  </li>
-                </ul>
+              <div class="col-md-4">
+                <div class="thumbnail">
+                  <img id="pro-img" src="" alt="" style="width: 100%" />
+                </div>
               </div>
             </div>
-            <!-- <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li> -->
-            <!-- /.box -->
           </div>
         </section>
-        <!-- /.content -->
       </div>
-      <!-- /.content-wrapper -->
-      <%- include("footer") %>
+
+      <%- include("footer.ejs") %>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+        function showImage(input) {
+          console.log(input.files);
+          if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              $("#pro-img").attr("src", e.target.result).width(150).height(200);
+            };
+            reader.readAsDataURL(input.files[0]);
+          }
+        }
+      </script>
     </div>
   </body>
 </html>

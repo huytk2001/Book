@@ -1,12 +1,13 @@
 const db = require("../config/database");
 const util = require("util");
 const query = util.promisify(db.query).bind(db);
-const categoryModel = require("../models/category.model");
+const employerModel = require("../models/employer.model");
+const { log } = require("console");
 
 exports.index = async function (req, res) {
   try {
-    categoryModel.getAll(req, function (err, data, totalPage, _page, _name) {
-      res.render("categories", {
+    employerModel.getAll(req, function (err, data, totalPage, _page, _name) {
+      res.render("user", {
         title: "Quản lý danh mục",
         data: data ? data : [],
         totalPage: totalPage,
@@ -22,21 +23,22 @@ exports.index = async function (req, res) {
 
 exports.edit = function (req, res) {
   let id = req.params.id;
-  categoryModel.getOne(id, function (err, data) {
+  employerModel.getOne(id, function (err, data) {
     if (err) {
       res.render("error", {
         message: err.msg,
         code: err.errno,
       });
     } else {
-      res.render("categories-edit", {
+      res.render("user-edit", {
         cat: data,
       });
     }
   });
 };
+// employer.controllers.js
 
-exports.editCategory = async function (req, res) {
+exports.editEmployer = async function (req, res) {
   let id = req.params.id;
   let newName = req.body.name;
   let bodyData = req.body;
@@ -49,9 +51,9 @@ exports.editCategory = async function (req, res) {
   }
 
   try {
-    let result = await categoryModel.updateCategory(id, bodyData);
+    let result = await employerModel.updateEmployer(id, bodyData);
     if (result) {
-      res.render("categories-edit", {
+      res.render("user-edit", {
         cat: bodyData,
       });
     } else {
@@ -69,48 +71,20 @@ exports.editCategory = async function (req, res) {
   }
 };
 
-exports.deleteCategory = function (req, res) {
+exports.delete = function (req, res) {
   let id = req.params.id;
-  categoryModel.delete(req, res, function (err, msg, data) {
+  employerModel.delete(req, res, function (err, msg, data) {
     if (err) {
       res.render("error", {
         message: err.msg,
         code: err.errno,
       });
     } else {
-      res.redirect("/categories");
+      res.redirect("/user");
     }
   });
 };
 
 exports.create = function (req, res) {
-  res.render("categories-add");
-};
-
-exports.createCategory = async function (req, res) {
-  try {
-    let checkExists = await categoryModel.checkCategoryExists(req.body.name);
-    if (checkExists) {
-      return res.render("error", {
-        message: "Danh mục với cùng tên đã tồn tại",
-        code: 400,
-      });
-    }
-
-    let result = await categoryModel.createCategory(req.body);
-    if (result) {
-      res.redirect("/categories");
-    } else {
-      res.render("error", {
-        message: "Không thể tạo danh mục mới",
-        code: 500,
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).render("error", {
-      message: "Đã có lỗi xảy ra",
-      code: 500,
-    });
-  }
+  res.render("user-add");
 };

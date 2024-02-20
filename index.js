@@ -20,7 +20,7 @@ const apiProductRoute = require("./public/views/Route/api.product.route");
 const apiCategoryRoute = require("./public/views/Route/api.category.route");
 const apiAccountRoute = require("./public/views/Route/api.account.route");
 const loginRoute = require("./public/views/Route/login.route");
-
+const employerRoute = require("./public/views/Route/employer.route");
 const imageUploadRouter = require("./public/config/imageUpload");
 const multer = require("multer");
 const flash = require("connect-flash");
@@ -109,6 +109,7 @@ app.use(productRoute);
 app.use(apiCategoryRoute);
 app.use(apiProductRoute);
 app.use(apiAccountRoute);
+app.use(employerRoute);
 
 app.use(cookieParser("GJDMLAA"));
 

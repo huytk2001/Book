@@ -177,6 +177,11 @@
                       class="img-circle"
                       alt="User Image"
                     />
+
+                    <p>
+                      <%=account.name%> - Web Developer
+                      <small>Member since Nov. 2012</small>
+                    </p>
                   </li>
                   <!-- Menu Body -->
                   <li class="user-body">
@@ -199,7 +204,9 @@
                       <a href="#" class="btn btn-default btn-flat">Profile</a>
                     </div>
                     <div class="pull-right">
-                      <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                      <a href="/logout" class="btn btn-default btn-flat"
+                        >Sign out</a
+                      >
                     </div>
                   </li>
                 </ul>
@@ -214,7 +221,7 @@
           </div>
         </nav>
       </header>
-      %> <%- include('aside') %>
+      <%- include('aside') %>
 
       <div class="content-wrapper">
         <section class="content-header">
@@ -223,12 +230,13 @@
             <%= title %>
           </h1>
         </section>
+
         <section class="content">
           <div class="box">
             <div class="box-header with-border">
               <div class="box-body" style="padding-bottom: 20px">
                 <form
-                  action="/categories"
+                  action=""
                   method="get"
                   class="form-inline"
                   role="form"
@@ -252,17 +260,19 @@
                     class="btn btn-success pull-right"
                     style="margin-left: 10px"
                   >
-                    <i class="fa fa-plus"></i> Thêm mới</a
-                  >
+                    <i class="fa fa-plus"></i> Thêm mới
+                  </a>
                 </form>
+
                 <table class="table">
                   <thead>
                     <tr>
                       <th>Id</th>
                       <th>Name</th>
-                      <th>Description</th>
+                      <th>Shipping Address</th>
+                      <th>Role</th>
+                      <th>Phone</th>
                       <th>Image</th>
-                      <th>Quantity</th>
                       <th></th>
                     </tr>
                   </thead>
@@ -271,28 +281,30 @@
                     <tr>
                       <td><%= cat.id %></td>
                       <td><%= cat.name %></td>
-                      <td><%= cat.description %></td>
+                      <td><%= cat.shipping_address %></td>
+                      <td><%= cat.role %></td>
+                      <td><%= cat.phone %></td>
                       <td>
                         <% if (cat.image) { %>
                         <img
                           width="60"
-                          src="uploads/<%= cat.image %>"
+                          src="uploads/image-1708335534603.png
+"
                           alt="Hình ảnh"
                           style="max-width: 100%; height: auto"
                         />
                         <% } %>
                       </td>
 
-                      <td><%= cat.quantity %></td>
                       <td class="text-right">
                         <a
-                          href="/categories-edit/<%= cat.id %>"
+                          href="/user-edit/<%= cat.id %>"
                           class="btn btn-sm btn-primary"
                         >
                           <i class="fa fa-edit"></i> Sửa
                         </a>
                         <a
-                          href="/categories-delete/<%= cat.id %>"
+                          href="/user-delete/<%= cat.id %>"
                           class="btn btn-sm btn-danger"
                         >
                           <i class="fa fa-trash"></i> Xóa
@@ -304,46 +316,41 @@
                 </table>
               </div>
               <!-- /.box-body -->
+
               <div class="box-footer" style="padding-top: 20px">
                 <ul class="pagination" style="margin: 0">
                   <li>
-                    <!-- Nút "Trang trước" -->
-                    <a href="/categories?page=<%= _page > 1 ? _page - 1 : 1 %>"
+                    <a href="/user?page=<%= _page > 1 ? _page - 1 : 1 %>"
                       >&laquo;</a
                     >
                   </li>
                   <% for (let i = 0; i < totalPage; i++) { %> <% if (_name) { %>
                   <li class="<%= _page === i + 1 ? 'active' : '' %>">
-                    <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
-                    <a href="/categories?page=<%= i + 1 %>&name=<%= _name %>"
-                      ><%= i + 1 %></a
-                    >
+                    <a href="/user?page=<%= i + 1 %>&name=<%= _name %>">
+                      <%= i + 1 %>
+                    </a>
                   </li>
                   <% } else { %>
                   <li class="<%= _page === i + 1 ? 'active' : '' %>">
-                    <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
-                    <a href="/categories?page=<%= i + 1 %>"><%= i + 1 %></a>
+                    <a href="/user?page=<%= i + 1 %>"> <%= i + 1 %> </a>
                   </li>
                   <% } %> <% } %>
                   <li>
-                    <!-- Nút "Trang kế tiếp" -->
                     <a
-                      href="/categories?page=<%= _page < totalPage ? _page + 1 : totalPage %>"
+                      href="/user?page=<%= _page < totalPage ? _page + 1 : totalPage %>"
                       >&raquo;</a
                     >
                   </li>
                 </ul>
               </div>
             </div>
-            <!-- <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li> -->
-            <!-- /.box -->
+            <!-- /.box-header -->
           </div>
+          <!-- /.box -->
         </section>
         <!-- /.content -->
       </div>
+
       <!-- /.content-wrapper -->
       <%- include("footer") %>
     </div>
