@@ -1,0 +1,142 @@
+<%- include('header.ejs') %> <%- include('aside.ejs') %>
+
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>
+      <i class="fa fa-th"></i>
+      <%= title %>
+    </h1>
+  </section>
+  <section class="content">
+    <div class="box">
+      <div class="box-header with-border">
+        <div class="box-body" style="padding-bottom: 20px">
+          <form
+            action="/product"
+            method="get"
+            class="form-inline"
+            role="form"
+            style="margin-bottom: 20px"
+          >
+            <div class="form-group">
+              <label class="sr-only" for="exampleInputEmail2"
+                >Email address</label
+              >
+              <input
+                name="name"
+                class="form-control"
+                placeholder="Input field"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa fa-search"></i>
+            </button>
+            <a
+              href="/add/product"
+              class="btn btn-success pull-right"
+              style="margin-left: 10px"
+            >
+              <i class="fa fa-plus"></i> Thêm mới</a
+            >
+          </form>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th class="description-column">Description</th>
+
+                <th>categoryID</th>
+                <th>Price</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Request</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% data.map(function(product,index) { %>
+              <tr>
+                <td><%= product.id %></td>
+                <td><%= product.name %></td>
+                <!-- <td><%= product.description %></td> -->
+                <td><%=product.cname %></td>
+                <td><%= product.price %></td>
+                <td><%= product.unit %></td>
+                <td><%= product.quantity %></td>
+                <td><%= product.author_id %></td>
+                <td><%= product.status %></td>
+                <td><%= product.request %></td>
+                <td class="text-right">
+                  <a
+                    href="/product-edit/<%= product.id %>"
+                    class="btn btn-sm btn-primary"
+                  >
+                    <i class="fa fa-edit"></i> Edit
+                  </a>
+                  <a
+                    href="/product-delete/<%= product.id %>"
+                    class="btn btn-sm btn-danger"
+                  >
+                    <i class="fa fa-trash"></i> Delete
+                  </a>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer" style="padding-top: 20px">
+          <ul class="pagination" style="margin: 0">
+            <li>
+              <!-- Nút "Trang trước" -->
+              <a href="/product?page=<%= _page > 1 ? _page - 1 : 1 %>"
+                >&laquo;</a
+              >
+            </li>
+            <% for (let i = 0; i < totalPage; i++) { %> <% if (_name) { %>
+            <li class="<%= _page === i + 1 ? 'active' : '' %>">
+              <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
+              <a href="/product?page=<%= i + 1 %>&name=<%= _name %>"
+                ><%= i + 1 %></a
+              >
+            </li>
+            <% } else { %>
+            <li class="<%= _page === i + 1 ? 'active' : '' %>">
+              <!-- Thêm class 'active' vào thẻ <li> nếu đó là trang hiện tại -->
+              <a href="/product?page=<%= i + 1 %>"><%= i + 1 %></a>
+            </li>
+            <% } %> <% } %>
+            <li>
+              <!-- Nút "Trang kế tiếp" -->
+              <a
+                href="/product?page=<%= _page < totalPage ? _page + 1 : totalPage %>"
+                >&raquo;</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li> -->
+      <!-- /.box -->
+    </div>
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+<%- include("footer.ejs") %>
+
+<style>
+  .description-column {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+</style>

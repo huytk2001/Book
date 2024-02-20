@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/user.controllers");
+const userController = require("../../controllers/user.controllers");
 // const { authPage } = require("../middleware/auth.middleeware");
 // const { checkRoleUser } = require("../middleware/user.middleware");
 // Thay đổi phần truyền vào của authPage thành một mảng các vai trò

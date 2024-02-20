@@ -1,0 +1,102 @@
+<%- include('header.ejs') %> <%- include('aside.ejs') %>
+
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Thêm mới danh mục</h1>
+  </section>
+  <section class="content">
+    <div class="box">
+      <div class="row">
+        <div class="col-md-6" style="padding: 20px">
+          <form
+            action=""
+            method="POST"
+            role="form"
+            enctype="multipart/form-data"
+          >
+            <div class="form-group">
+              <label for="name">Tên danh mục:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                value="<%= cat.name%>"
+                placeholder="Nhập tên danh mục"
+              />
+            </div>
+            <div class="form-group">
+              <label for="description">Mô tả:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="description"
+                name="description"
+                value="<%= cat.description%>"
+                placeholder="Nhập mô tả"
+              />
+            </div>
+            <div class="form-group">
+              <label for="">Mô tả sản phẩm</label>
+
+              <textarea
+                name="description"
+                class="form-control noi-dung"
+                rows="10 "
+                required="required"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="image">Hình ảnh:</label>
+              <input
+                type="file"
+                class="form-control"
+                id="image"
+                name="image"
+                value="<%= cat.image%>"
+                onchange="showImage(this)"
+              />
+            </div>
+            <div class="form-group">
+              <label for="quantity">Số lượng:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="quantity"
+                name="quantity"
+                value="<%= cat.quantity%>"
+                placeholder="Nhập số lượng"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa fa-save"></i> Lưu lại
+            </button>
+            <a href="/categories" class="btn btn-default">
+              <i class="fa fa-arrow-left"></i> Quay lại
+            </a>
+          </form>
+        </div>
+        <div class="col-md-4">
+          <div class="thumbnail">
+            <img id="pro-img" src="" alt="" style="width: 100%" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<%- include("footer.ejs") %>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  function showImage(input) {
+    console.log(input.files);
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        $("#pro-img").attr("src", e.target.result).width(150).height(200);
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>

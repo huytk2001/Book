@@ -1,0 +1,82 @@
+<%- include('header.ejs') %> <%- include('aside.ejs') %>
+
+<div class="content-wrapper">
+  <section class="content-header">
+    <h1>Thêm mới sản phẩm</h1>
+  </section>
+  <section class="content">
+    <div class="box">
+      <div class="row">
+        <div class="col-md-6" style="padding: 10px; margin-left: 25px">
+          <form method="post" role="form">
+            <div class="form-group">
+              <label for="">Tên sản phẩm</label>
+              <input
+                style="outline: none"
+                type="text"
+                class="form-control"
+                name="name"
+                placeholder="Nhập tên sản phẩm"
+              />
+            </div>
+            <div class="form-group">
+              <label for="">Mô tả sản phẩm</label>
+
+              <textarea
+                name="description"
+                class="form-control"
+                rows="10 "
+                required="required"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="">Danh mục</label>
+              <select name="categoryID" class="form-control">
+                <% cats.map((cat)=>{ %>
+                <option value="<%=cat.id%>"><%=cat.name%></option>
+                <% })%>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="">Giá sản phẩm</label>
+              <input
+                style="outline: none"
+                type="number"
+                class="form-control"
+                name="price"
+                placeholder="Nhập giá sản phẩm"
+              />
+            </div>
+            <div class="form-group">
+              <label for="">Đơn vị</label>
+              <input
+                style="outline: none"
+                type="text"
+                class="form-control"
+                name="unit"
+                placeholder="Nhập đơn vị"
+              />
+            </div>
+            <div class="form-group">
+              <label for="">Số lượng</label>
+              <input
+                style="outline: none"
+                type="text"
+                class="form-control"
+                name="quantity"
+                placeholder="Nhập số lượng"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa fa-save"></i> Lưu lại
+            </button>
+            <a href="/product" class="btn btn-default pull-right">
+              <i class="fa fa-arrow-left"></i> Quay lại
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+<%- include("footer.ejs") %>

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const bookControllers = require("../controllers/book.controllers");
+const bookControllers = require("../../controllers/book.controllers");
 
 router.get("/book/list", bookControllers.list);
 router.get("/book/:id", bookControllers.book);

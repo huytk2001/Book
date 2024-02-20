@@ -56,10 +56,23 @@
                 <td><%= cat.id %></td>
                 <td><%= cat.name %></td>
                 <td><%= cat.description %></td>
-                <td><%= cat.image %></td>
+                <td>
+                  <% if (cat.image) { %>
+                  <img
+                    width="60"
+                    src="uploads/<%= cat.image %>"
+                    alt="Hình ảnh"
+                    style="max-width: 100%; height: auto"
+                  />
+                  <% } %>
+                </td>
+
                 <td><%= cat.quantity %></td>
                 <td class="text-right">
-                  <a href="#" class="btn btn-sm btn-primary">
+                  <a
+                    href="/categories-edit/<%= cat.id %>"
+                    class="btn btn-sm btn-primary"
+                  >
                     <i class="fa fa-edit"></i> Sửa
                   </a>
                   <a
