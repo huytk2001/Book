@@ -8,7 +8,7 @@ const methodOverride = require("method-override");
 const database = require("./public/config/database");
 const hostname = process.env.DB_HOST;
 const app = express();
-
+const sessionstorage = require("node-sessionstorage");
 const port = process.env.PORT || 3000;
 const morgan = require("morgan");
 const bookRouter = require("./public/views/Route/book.router");
@@ -16,6 +16,11 @@ const userRouter = require("./public/views/Route/user.router");
 const homeRouter = require("./public/views/Route/home.router");
 const categoryRoute = require("./public/views/Route/category.route");
 const productRoute = require("./public/views/Route/product.route");
+const apiProductRoute = require("./public/views/Route/api.product.route");
+const apiCategoryRoute = require("./public/views/Route/api.category.route");
+const apiAccountRoute = require("./public/views/Route/api.account.route");
+const loginRoute = require("./public/views/Route/login.route");
+
 const imageUploadRouter = require("./public/config/imageUpload");
 const multer = require("multer");
 const flash = require("connect-flash");
@@ -34,7 +39,7 @@ app.use(session({ secret: "GJDMLAA", cookie: { maxAge: 60000 } }));
 app.use(flash());
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:4000");
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, OPTIONS, PUT, PATCH, DELETE"
@@ -47,6 +52,7 @@ app.use((req, res, next) => {
 
   next();
 });
+
 // Tạo middleware để lưu trữ ảnh tải lên vào thư mục "uploads"
 
 app.use((req, res, next) => {
@@ -83,12 +89,27 @@ app.post("/uploads", upload.single("image"), (req, res) => {
   const imagePath = `uploads/${imageFileName}`;
   res.json(imagePath);
 });
+app.use(loginRoute);
+app.use(function (req, res, next) {
+  let accountJson = sessionstorage.getItem("admin_login");
+  console.log(accountJson);
+  if (accountJson) {
+    global.account = JSON.parse(accountJson);
+    next();
+  } else {
+    res.redirect("/login");
+  }
+});
 app.use("/uploads", express.static("uploads"));
 app.use(bookRouter);
 app.use(userRouter);
 app.use(homeRouter);
 app.use(categoryRoute);
 app.use(productRoute);
+app.use(apiCategoryRoute);
+app.use(apiProductRoute);
+app.use(apiAccountRoute);
+
 app.use(cookieParser("GJDMLAA"));
 
 app.get("//", (req, res) => {
