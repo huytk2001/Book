@@ -2,18 +2,28 @@ import Logo from "../../../assets/images/Logo.png";
 import { Search, ShoppingCart, User, ChevronDown } from "react-feather";
 import { Link } from "react-router-dom";
 import BgBook5 from "../../../assets/images/damnghi.jpg";
-
+import { useSelector, useDispatch } from "react-redux";
 import { PhoneCall } from "react-feather";
 import { Heart } from "react-feather";
 import { useState } from "react";
 import ButtonAllCategory from "../Component/ButtonAllCategory";
+import { useNavigate } from "react-router-dom";
+import {
+  getCartItemCount,
+  getCartItems,
+  getCartTotal,
+  getUserId,
+} from "../../../redux/selectors";
 export default function Header() {
   const [isHover, SetIsHover] = useState(false);
-
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const handleMouseEnter = () => {
     SetIsHover(true);
   };
 
+  const userId = useSelector(getUserId);
   const handleMouseLeave = () => {
     SetIsHover(false);
   };
@@ -139,12 +149,18 @@ export default function Header() {
                       </p>
                     </div>
                     <div className="flex justify-between pb-2 pt-2">
-                      <button className="text-theme-color text-[16px] border-[2px] border-theme-color px-[12px] py-[6px] hover:bg-theme-color hover:text-white transition">
+                      <Link
+                        to="/viewcard"
+                        className="text-theme-color text-[16px] border-[2px] border-theme-color px-[12px] py-[6px] hover:bg-theme-color hover:text-white transition"
+                      >
                         Giỏ hàng
-                      </button>
-                      <button className="text-white text-[16px] border-[2px] border-theme-color  bg-theme-color  px-[12px] py-[6px]  transition  hover:bg-white hover:text-theme-color">
+                      </Link>
+                      <Link
+                        to="/cart"
+                        className="text-white text-[16px] border-[2px] border-theme-color  bg-theme-color  px-[12px] py-[6px]  transition  hover:bg-white hover:text-theme-color"
+                      >
                         Thanh toán
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 )}

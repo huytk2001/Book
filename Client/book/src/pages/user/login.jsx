@@ -2,79 +2,81 @@ import React, { useState } from "react";
 import Header from "./common/Header";
 import axios from "axios";
 import Bglogin from "../../assets/images/log-in.png";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { login } from "../../redux/actions/userActions";
 import { Link } from "react-feather";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
+
+const schema = yup
+  .object({
+    email: yup.string().required("Vui lòng nhập email"),
+    password: yup
+      .string()
+      .min(8, "Password phải từ 8 kí tự trở trên")
+      .required("Vui lòng nhập password"),
+  })
+  .required();
+
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { accessToken } = useSelector((state) => state.user); // Correct typo in 'accessToken'
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Use useNavigate hook properly
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { register, handleSubmit, reset } = useForm({
+    resolver: yupResolver(schema),
+  });
 
-  const handleRegister = async (event) => {
-    event.preventDefault();
-
+  const onSubmit = async (data) => {
     setLoading(true);
-
     try {
-      const response = await axios.post("http://localhost:4000/account/login", {
-        email: email,
-        password: password,
-      });
+      const response = await axios.post(
+        "http://localhost:4000/api/account/login",
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+      console.log("Response data:", response.data); // Log response data
+      if (response.status === 200) {
+        const { user, userId, email, role, accessToken, refreshToken } =
+          response.data;
+        console.log("User:", user);
+        console.log("UserID:", userId);
+        console.log("Email:", email);
+        console.log("Role:", role);
+        console.log("AccessToken:", accessToken);
+        console.log("RefreshToken:", refreshToken);
 
-      console.log("Registration successful:", response.data);
+        if (role === "user") {
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
 
-      // Sau khi đăng ký thành công, bạn có thể thực hiện các thao tác khác, chẳng hạn chuyển hướng trang.
-    } catch (error) {
-      console.error("Registration failed:", error.response.data.message);
+          dispatch(login(user, userId, email, role, accessToken, refreshToken));
+          reset(); // Clear the form fields
+          navigate("/"); // Navigate to the home page
+        } else if (role === "Admin") {
+          setError(
+            "Bạn là người quản lý. Hãy truy cập vào trang đăng nhập dành riêng cho Người quản lý."
+          );
+        }
+      }
+    } catch (err) {
+      if (err.response.status === 400) {
+        setError(err.response.data.error);
+      } else {
+        setError("Something went wrong!");
+      }
     }
-
     setLoading(false);
   };
 
   return (
     <>
       <Header />
-      {/* <section className="login-section py-10  flex relative items-center z-0 justify-center ">
-        <div className="w-[1280px] h-auto m-auto flex items-center justify-between">
-          <div className="w-full flex flex-col justify-center items-center">
-            <div>
-              <h2>Chào mừng bạn đến với chúng tôi</h2>
-            </div>
-            <form onSubmit={handleRegister}>
-              <div className="relative">
-                <input
-                  type="text"
-                  className="w-[400px] h-[50px] px-3 border"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email"
-                />
-                <label
-                  className="absolute top-1/2 left-3 text-[14px] -translate-y-1/2 bg-white px-1 text-text7777 pointer-events-none"
-                  htmlFor="email"
-                ></label>
-              </div>
-              <div className="relative">
-                <input
-                  type="password"
-                  className="w-[400px] h-[50px] px-3 border"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
-                />
-                <label
-                  className="absolute top-1/2 left-3 text-[14px] -translate-y-1/2 bg-white px-1 text-text7777 pointer-events-none"
-                  htmlFor="password"
-                ></label>
-              </div>
-
-              <div className="flex justify-center bg-theme-color">
-                <button type="submit" className="btn btn-primary">
-                  {loading ? "Đang đăng ký..." : "Register"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </section> */}
       <section className="login-section py-10  flex relative items-center z-0 justify-center ">
         <div className="container-fluid-lg mx-auto md:px-0">
           <div className="row w-[100%]   md:mx-[-12px]  ">
@@ -90,27 +92,22 @@ export default function Register() {
                     </h4>
                   </div>
                   <div className="input-box ">
-                    <form className="flex flex-col">
+                    <form
+                      className="flex flex-col"
+                      onSubmit={handleSubmit(onSubmit)}
+                    >
                       <div className="from-floating relative mt-4">
-                        <input className="w-full h-[50px] px-3 border" />
-                        <label
-                          className="absolute top-1/2 left-3 text-[14px] -translate-y-1/2 bg-white px-1 text-text7777 pointer-events-none"
-                          htmlFor="email"
-                        >
-                          Email
-                        </label>
+                        <input
+                          className="w-full h-[50px] px-3 border"
+                          {...register("email")}
+                        />
                       </div>
                       <div className="from-floating relative mt-4">
                         <input
                           type="password"
                           className="w-full h-[50px] px-3 border required:"
+                          {...register("password")}
                         />
-                        <label
-                          className="absolute top-1/2 left-3 text-[14px] -translate-y-1/2 bg-white px-1 text-text7777 pointer-events-none"
-                          htmlFor="password"
-                        >
-                          Mật khẩu
-                        </label>
                       </div>
                       <div className="forgot-box mt-4 flex items-center justify-between">
                         <div className="rm flex items-center ">
@@ -140,9 +137,9 @@ export default function Register() {
                           Đăng nhập
                         </button>
                       </div>
+                      {error && <p className="text-red-500 mt-2">{error}</p>}{" "}
                     </form>
                   </div>
-
                   <div className="other-log-in mt-4 relative text-center">
                     <div className="relative">
                       <h6 className="bg-them-gray uppercase px-14 py-2 inline-block relative z-10">
@@ -150,11 +147,6 @@ export default function Register() {
                       </h6>
                       <div className="absolute top-1/2 transform -translate-y-1/2 left-0 w-full h-[0.5px] bg-textddd"></div>
                     </div>
-                  </div>
-
-                  <div className="other-log-in mt-6 relative">
-                    <div className="absolute top-1/2 transform -translate-y-1/2 left-0 w-full h-[0.5px] bg-textddd"></div>
-                    <h6></h6>
                   </div>
                   <div className="other-sign-up mt-10 text-center">
                     <h4 className="text-text7777  leading-6 m-0 font-normal  mb-2 text-[18px]">
@@ -171,7 +163,8 @@ export default function Register() {
               </div>
               <div className="left flex hidden md:flex">
                 <div className="flex items-center justify-center h-full px-3 md:ml-[72px]">
-                  <img src={Bglogin} />
+                  <img src={Bglogin} alt="Background" />{" "}
+                  {/* Add alt text for accessibility */}
                 </div>
               </div>
             </div>

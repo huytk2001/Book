@@ -1,16 +1,24 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
+import App from "./App.jsx";
 import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
-import App from "./App";
-import "font-awesome/css/font-awesome.min.css";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./redux/store.js";
+import Modal from "react-modal";
+
+// Thiết lập phần tử ứng dụng chính
+Modal.setAppElement("#root");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>
+  <React.StrictMode>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
+  </React.StrictMode>
 );
-
-console.log("Application is rendered.");
-console.log("====================================");
-console.log(App); // Corrected log statement
-console.log("====================================");

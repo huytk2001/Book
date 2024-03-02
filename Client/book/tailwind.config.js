@@ -3,6 +3,8 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      flex: { 2: "2 2 0%", 3: "3 3 0%" },
+
       colors: {
         primaryGreen: "#0DA487",
         secondaryRed: "#FF7272",
@@ -19,12 +21,14 @@ export default {
         darkGray: "#e9ecef",
         lineGray: "#ececec",
         text2222: "#222222",
+        text3333: "#333333",
         text7777: "#777",
         textddd: "#ddd",
         textwhite: "#fff",
         textred: "#C92127",
         textbg: "#f0f0f0",
         texthot: "#FCDDEF",
+
         "theme-color": "#5ecee4",
         "them-gray": "#f8f8f8",
         "theme-color2":
