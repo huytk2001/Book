@@ -7,7 +7,7 @@ const userController = require("../../controllers/user.controllers");
 
 router.get("/list", userController.list); //  // Kiểm tra xem userController.list có được định nghĩa chưa
 router.post("/register/user", userController.add_user);
-router.post("/user/login", userController.login);
+router.post("/user/login1", userController.login);
 
 module.exports = router;
 // authPage(["user", "admin"])

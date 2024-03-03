@@ -8,7 +8,7 @@ exports.index = async function (req, res) {
   try {
     employerModel.getAll(req, function (err, data, totalPage, _page, _name) {
       res.render("user", {
-        title: "Quản lý danh mục",
+        title: "Danh sách người dùng",
         data: data ? data : [],
         totalPage: totalPage,
         _page: parseInt(_page),
@@ -73,15 +73,32 @@ exports.editEmployer = async function (req, res) {
 
 exports.delete = function (req, res) {
   let id = req.params.id;
-  employerModel.delete(req, res, function (err, msg, data) {
+
+  // Lấy thông tin về người dùng cần xóa
+  employerModel.getOne(id, function (err, result) {
     if (err) {
-      res.render("error", {
-        message: err.msg,
-        code: err.errno,
-      });
-    } else {
-      res.redirect("/user");
+      return res
+        .status(500)
+        .json({ message: "Đã có lỗi xảy ra khi lấy thông tin người dùng" });
     }
+
+    // Kiểm tra nếu người dùng có vai trò là "admin" thì không thực hiện xóa
+    if (result.role === "admin") {
+      return res
+        .status(403)
+        .json({ message: "Không thể xóa người dùng có vai trò là admin" });
+    }
+
+    // Nếu không phải là "admin", thực hiện xóa người dùng
+    employerModel.delete(req, res, function (err, msg, data) {
+      if (err) {
+        return res
+          .status(500)
+          .json({ message: "Đã có lỗi xảy ra khi xóa người dùng" });
+      } else {
+        return res.redirect("/user");
+      }
+    });
   });
 };
 
