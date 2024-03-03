@@ -5,7 +5,7 @@ import BgBook5 from "../../../assets/images/damnghi.jpg";
 import { useSelector, useDispatch } from "react-redux";
 import { PhoneCall } from "react-feather";
 import { Heart } from "react-feather";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ButtonAllCategory from "../Component/ButtonAllCategory";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,6 +14,7 @@ import {
   getCartTotal,
   getUserId,
 } from "../../../redux/selectors";
+import { logout } from "../../../redux/actions/userActions";
 export default function Header() {
   const [isHover, SetIsHover] = useState(false);
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
@@ -27,7 +28,30 @@ export default function Header() {
   const handleMouseLeave = () => {
     SetIsHover(false);
   };
-
+  useEffect(() => {
+    return () => {
+      SetIsHover(false);
+    };
+  }, []);
+  const handleLogout = () => {
+    // xoa accessToken,userId va refreshtoken khoi localstorage
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("refreshToken");
+    dispatch(logout());
+    navigate("/");
+  };
+  const handleProceedToCheckout = () => {
+    if (isAuthenticated === true) {
+      // Nếu đã đăng nhập, chuyển hướng đến trang thanh toán
+      navigate("/checkout");
+    } else {
+      // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+      navigate("/login/user");
+    }
+  };
   return (
     <div className="header w-full h-auto ">
       <div className="w-full bg-theme-color">
@@ -47,29 +71,59 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Right section (Account) */}
           <div className="account flex justify-end items-center">
-            <div className="relative group z-10">
-              <Link to="/account" className="flex items-center">
-                <User name="cart" size={24} color="white" />
-                <h1 className="text-[14px] text-white ml-1">My Account</h1>
+            <div className="relative group">
+              <Link>
+                <User name="cart" size={24} color="black" />
               </Link>
-              <div className="user-options    absolute top-full right-0 bg-white p-3 rounded-[5px] shadow-lg hidden opacity-0 group-hover:block group-hover:opacity-100 transition-opacity duration-300">
-                <div className="flex flex-col gap-3 w-[120px]">
-                  <Link
-                    className="text-[14px] text-textGray hover:text-primaryGreen"
-                    to="/login/user"
-                  >
-                    Đăng nhập
-                  </Link>
-                  <Link
-                    className="text-[14px] text-textGray hover:text-primaryGreen "
-                    to="/register/user"
-                  >
-                    Đăng ký
-                  </Link>
+
+              {isAuthenticated ? (
+                <div className="user-options absolute top-full right-0 bg-white p-3 rounded-[5px] shadow-lg hidden opacity-0 group-hover:block group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="flex flex-col gap-3 w-[120px]">
+                    <Link
+                      className="text-[14px] text-textGray hover:text-primaryGreen"
+                      to={`/profile/user/${userId}`}
+                    >
+                      Hồ sơ cá nhân
+                    </Link>
+                    <Link
+                      className="text-[14px] text-textGray hover:text-primaryGreen"
+                      to="/order/user"
+                    >
+                      Đơn hàng
+                    </Link>
+                    <Link
+                      className="text-[14px] text-textGray hover:text-primaryGreen"
+                      to=""
+                    >
+                      <button onClick={handleLogout}>Đăng xuất</button>
+                    </Link>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="user-options absolute top-full right-0 bg-white p-3 rounded-[5px] shadow-lg hidden opacity-0 group-hover:block group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="flex flex-col gap-3 w-[120px]">
+                    <Link
+                      className="text-[14px] text-textGray hover:text-primaryGreen"
+                      to="/login/user"
+                    >
+                      Đăng nhập
+                    </Link>
+                    <Link
+                      className="text-[14px] text-textGray hover:text-primaryGreen"
+                      to="/register/user"
+                    >
+                      Đăng ký
+                    </Link>
+                    <Link
+                      className="text-[14px] text-textGray hover:text-primaryGreen"
+                      to="/forgot-password"
+                    >
+                      Quên mật khẩu
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

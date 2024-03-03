@@ -6,6 +6,7 @@ import Home from "./pages/user/home";
 import Cart from "./pages/user/Component/Cart/Cart";
 import ViewCart from "./pages/user/Component/Cart/ViewCart";
 import ProductInfomation from "./pages/user/Component/Product/ProductInfomation";
+import UserInfo from "./pages/user/ProfileUser";
 function App() {
   return (
     <Routes>
@@ -16,6 +17,7 @@ function App() {
       <Route path="/cart/" element={<Cart />} />
       <Route path="/viewcard/" element={<ViewCart />} />
       <Route path="/product-category/" element={<ProductInfomation />} />
+      <Route path="/profile/user/:userId" element={<UserInfo />} />
     </Routes>
   );
 }

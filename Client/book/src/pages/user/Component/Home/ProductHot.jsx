@@ -1,42 +1,41 @@
-import { useState } from "react";
-import BgBook from "../../../../assets/images/dragon.jpg";
-import BgBook2 from "../../../../assets/images/NoelDay.jpg";
-import BgBook3 from "../../../../assets/images/nxbtr.jpg";
-import BgBook4 from "../../../../assets/images/nglbn.jpg";
-import BgBook5 from "../../../../assets/images/damnghi.jpg";
-import BgLogo from "../../../../assets/images/icon_dealhot_new.png";
+import React, { useState, useEffect } from "react";
+
 export default function ProductHot() {
   const [activeCategory, setActiveCategory] = useState("newProducts");
+  const [products, setProducts] = useState([]);
 
-  const products = {
-    newProducts: [
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      { title: "Dragon Ball5", image: BgBook5, price: "40.000đ" },
-      // Add more new products as needed
-    ],
-    featuredProducts: [
-      { title: "Featured Book 1", image: BgBook2, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook3, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook4, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook3, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      // Add more featured products as needed
-    ],
-  };
+  useEffect(() => {
+    fetch("http://localhost:4000/api/product")
+      .then((response) => response.json())
+      .then((data) => {
+        // Lấy dữ liệu sản phẩm từ API
+        console.log(data);
+        setProducts(data.data);
+      })
+      .catch((error) => console.error("Lỗi khi gọi API:", error));
+  }, []);
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
   };
+
+  const formatPrice = (price) => {
+    // Format giá thành chuỗi với định dạng tiền tệ
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(price);
+  };
+
   return (
     <section className="py-[30px] bg-textbg relative ">
       <div className="w-[1280px] h-auto m-auto flex items-center  bg-white  rounded-xl">
         <div className="w-full flex flex-col  ">
           <div className="title-product flex  items-center py-3 pl-4 bg-texthot  rounded-tr-[8px] rounded-tl-lg ">
-            <img className="w-8 h-8 mr-4 " src={BgLogo} />
             <span className="text-[18px] uppercase font-[600] ">
-              xu hướng mua sắm
+              {activeCategory === "newProducts"
+                ? "Sản phẩm mới"
+                : "Sản phẩm giảm sốc"}
             </span>
           </div>
           <div>
@@ -65,30 +64,50 @@ export default function ProductHot() {
                 }`}
                 onClick={() => handleCategoryClick("featuredProducts")}
               >
-                sách hôt giảm sốc
+                Sản phẩm giảm sốc
               </li>
             </ul>
           </div>
           <div className="container mx-auto px-[15px] pb-[20px] ">
             <div className="grid grid-cols-5 w-full gap-2 pt-10">
-              {products[activeCategory].map((product, index) => (
-                <div
-                  key={index}
-                  className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4"
-                >
-                  <img
-                    className="max-h-[190px] max-w-full rounded-md overflow-hidden"
-                    src={product.image}
-                    alt={product.title}
-                  />
-                  <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
-                    {product.title}
-                  </h6>
-                  <p className="text-[16px] font-[600] text-center text-textred">
-                    {product.price}
-                  </p>
-                </div>
-              ))}
+              {products
+                .filter((product) =>
+                  activeCategory === "featuredProducts"
+                    ? // Lọc ra sản phẩm giảm sốc và giảm giá 10%
+                      product.price && product.price > 0 && product.price * 0.9
+                    : // Lấy toàn bộ sản phẩm mới
+                      true
+                )
+                .map((product, index) => (
+                  <div
+                    key={index}
+                    className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4"
+                  >
+                    <img
+                      className="max-h-[190px] max-w-full rounded-md overflow-hidden"
+                      src={`http://localhost:4000/uploads/${product.image}`}
+                      alt={product.title}
+                    />
+                    <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
+                      {product.name}
+                    </h6>
+                    <p className="text-[16px] font-[600] text-center text-textred">
+                      {activeCategory === "featuredProducts" ? (
+                        // Hiển thị phạm vi giá giảm
+                        <>
+                          {formatPrice(product.price * 0.9)}
+                          <br />
+                          <span className="line-through">
+                            {formatPrice(product.price)}
+                          </span>{" "}
+                        </>
+                      ) : (
+                        // Hiển thị giá gốc
+                        formatPrice(product.price)
+                      )}
+                    </p>
+                  </div>
+                ))}
             </div>
           </div>
         </div>

@@ -1,34 +1,59 @@
-import { useState } from "react";
-import BgBook from "../../../../assets/images/dragon.jpg";
-import BgBook2 from "../../../../assets/images/NoelDay.jpg";
-import BgBook3 from "../../../../assets/images/nxbtr.jpg";
-import BgBook4 from "../../../../assets/images/nglbn.jpg";
-import BgBook5 from "../../../../assets/images/damnghi.jpg";
+import React, { useState, useEffect } from "react";
 
 export default function Product() {
   const [activeCategory, setActiveCategory] = useState("newProducts");
+  const [products, setProducts] = useState([]);
 
-  const products = {
-    newProducts: [
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      { title: "Dragon Ball5", image: BgBook5, price: "40.000đ" },
-      // Add more new products as needed
-    ],
-    featuredProducts: [
-      { title: "Featured Book 1", image: BgBook2, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook3, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook4, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook3, price: "40.000đ" },
-      { title: "Dragon Ball", image: BgBook, price: "40.000đ" },
-      // Add more featured products as needed
-    ],
+  useEffect(() => {
+    fetchProducts(activeCategory);
+  }, [activeCategory]);
+
+  const fetchProducts = (category) => {
+    let url = "http://localhost:4000/api/product";
+
+    if (category === "featuredProducts") {
+      // Nếu là sản phẩm tiêu biểu, thêm tham số type=featured vào URL
+      url += "?type=featured";
+      fetchRandomFeaturedProducts(url);
+    } else {
+      fetchNewProducts(url);
+    }
+  };
+
+  const fetchNewProducts = (url) => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        // Sắp xếp sản phẩm theo ngày tạo
+        const sortedProducts = data.data.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        // Lấy 5 sản phẩm mới nhất
+        setProducts(sortedProducts.slice(0, 5));
+      })
+      .catch((error) => console.error("Lỗi khi gọi API:", error));
+  };
+
+  const fetchRandomFeaturedProducts = (url) => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        // Lấy ra 5 sản phẩm ngẫu nhiên từ danh sách sản phẩm
+        const randomFeaturedProducts = getRandomProducts(data.data, 5);
+        setProducts(randomFeaturedProducts);
+      })
+      .catch((error) => console.error("Lỗi khi gọi API:", error));
+  };
+
+  const getRandomProducts = (products, count) => {
+    const shuffled = products.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
   };
 
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
   };
+
   return (
     <section className="py-[30px] product-selection relative ">
       <div className="w-[1280px] h-auto relative m-auto flex items-center justify-between bg-white py-3">
@@ -65,21 +90,22 @@ export default function Product() {
           </div>
           <div className="container mx-auto px-[15px] pb-[20px] ">
             <div className="grid grid-cols-5 w-full gap-2 pt-10">
-              {products[activeCategory].map((product, index) => (
+              {products.map((product, index) => (
                 <div
                   key={index}
                   className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4"
                 >
                   <img
                     className="max-h-[190px] max-w-full rounded-md overflow-hidden"
-                    src={product.image}
+                    src={`http://localhost:4000/uploads/${product.image}`}
                     alt={product.title}
                   />
+
                   <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
-                    {product.title}
+                    {product.name}
                   </h6>
                   <p className="text-[16px] font-[600] text-center text-textred">
-                    {product.price}
+                    {product.price}đ
                   </p>
                 </div>
               ))}
