@@ -7,6 +7,9 @@ import Cart from "./pages/user/Component/Cart/Cart";
 import ViewCart from "./pages/user/Component/Cart/ViewCart";
 import ProductInfomation from "./pages/user/Component/Product/ProductInfomation";
 import UserInfo from "./pages/user/ProfileUser";
+import ProductCategory from "./pages/user/Component/Category/ProductCategory";
+import SellerDetail from "./pages/user/SellerDetail";
+import Checkout from "./pages/user/Component/Cart/Checkout";
 function App() {
   return (
     <Routes>
@@ -16,8 +19,11 @@ function App() {
       <Route path="/register/user" element={<Register />} />
       <Route path="/cart/" element={<Cart />} />
       <Route path="/viewcard/" element={<ViewCart />} />
-      <Route path="/product-category/" element={<ProductInfomation />} />
+      <Route path="/product-detail/:id" element={<ProductInfomation />} />
       <Route path="/profile/user/:userId" element={<UserInfo />} />
+      <Route path="/category" element={<ProductCategory />} />
+      <Route path="/filter-product/:id" element={<SellerDetail />} />
+      <Route path="/checkout" element={<Checkout />} />
     </Routes>
   );
 }

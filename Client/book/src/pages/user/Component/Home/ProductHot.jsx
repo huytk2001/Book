@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 
 export default function ProductHot() {
   const [activeCategory, setActiveCategory] = useState("newProducts");
@@ -8,11 +9,10 @@ export default function ProductHot() {
     fetch("http://localhost:4000/api/product")
       .then((response) => response.json())
       .then((data) => {
-        // Lấy dữ liệu sản phẩm từ API
         console.log(data);
         setProducts(data.data);
       })
-      .catch((error) => console.error("Lỗi khi gọi API:", error));
+      .catch((error) => console.error("Error fetching products:", error));
   }, []);
 
   const handleCategoryClick = (category) => {
@@ -20,7 +20,6 @@ export default function ProductHot() {
   };
 
   const formatPrice = (price) => {
-    // Format giá thành chuỗi với định dạng tiền tệ
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
@@ -29,7 +28,7 @@ export default function ProductHot() {
 
   return (
     <section className="py-[30px] bg-textbg relative ">
-      <div className="w-[1280px] h-auto m-auto flex items-center  bg-white  rounded-xl">
+      <div className="w-[1280px] h-auto relative m-auto flex items-center  bg-white  rounded-xl">
         <div className="w-full flex flex-col  ">
           <div className="title-product flex  items-center py-3 pl-4 bg-texthot  rounded-tr-[8px] rounded-tl-lg ">
             <span className="text-[18px] uppercase font-[600] ">
@@ -73,14 +72,13 @@ export default function ProductHot() {
               {products
                 .filter((product) =>
                   activeCategory === "featuredProducts"
-                    ? // Lọc ra sản phẩm giảm sốc và giảm giá 10%
-                      product.price && product.price > 0 && product.price * 0.9
-                    : // Lấy toàn bộ sản phẩm mới
-                      true
+                    ? product.price && product.price > 0 && product.price * 0.9
+                    : true
                 )
-                .map((product, index) => (
-                  <div
-                    key={index}
+                .map((product) => (
+                  <NavLink
+                    to={`/product-detail/${product.id}`}
+                    key={product.id}
                     className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4"
                   >
                     <img
@@ -93,7 +91,6 @@ export default function ProductHot() {
                     </h6>
                     <p className="text-[16px] font-[600] text-center text-textred">
                       {activeCategory === "featuredProducts" ? (
-                        // Hiển thị phạm vi giá giảm
                         <>
                           {formatPrice(product.price * 0.9)}
                           <br />
@@ -102,11 +99,10 @@ export default function ProductHot() {
                           </span>{" "}
                         </>
                       ) : (
-                        // Hiển thị giá gốc
                         formatPrice(product.price)
                       )}
                     </p>
-                  </div>
+                  </NavLink>
                 ))}
             </div>
           </div>

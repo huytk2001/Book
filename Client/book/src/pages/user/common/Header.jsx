@@ -131,13 +131,15 @@ export default function Header() {
       <div className="w-full bg-white">
         <div className="center-header w-auto h-full m-auto  py-[35px]">
           <div className="w-[1280px] h-full m-auto flex    justify-between  items-center">
-            <div className="flex ">
-              <img
-                src={Logo}
-                alt="logo"
-                className="w-[170px] h-auto object-contain"
-              />
-            </div>
+            <Link to="/">
+              <div className="flex ">
+                <img
+                  src={Logo}
+                  alt="logo"
+                  className="w-[170px] h-auto object-contain"
+                />
+              </div>
+            </Link>
 
             <div className="relative flex justify-center items-center h-full">
               <form className="flex items-center ">
