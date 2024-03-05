@@ -23,11 +23,13 @@ export default function Header() {
   const handleMouseEnter = () => {
     SetIsHover(true);
   };
-
+  const cartItemCount = useSelector(getCartItemCount);
+  const cartItems = useSelector(getCartItems);
   const userId = useSelector(getUserId);
   const handleMouseLeave = () => {
     SetIsHover(false);
   };
+  const cartTotal = useSelector(getCartTotal);
   useEffect(() => {
     return () => {
       SetIsHover(false);
@@ -51,6 +53,14 @@ export default function Header() {
       // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
       navigate("/login/user");
     }
+  };
+  const formatPrice = (price) => {
+    const formattedPrice = Number(price).toLocaleString("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    });
+
+    return formattedPrice;
   };
   return (
     <div className="header w-full h-auto ">
@@ -177,31 +187,38 @@ export default function Header() {
                 <ShoppingCart name="cart" size={24} color="black" />{" "}
                 <div className=" absolute top-[-12px] left-[14px] w-[22px] h-[22px] flex justify-center items-center rounded-[4px] bg-secondaryRed  ">
                   <span className="text-[12px] text-white font-semibold">
-                    2
+                    {cartItemCount}
                   </span>
                 </div>
                 {isHover && (
                   <div className="bg-white rounded-md shadow-md z-30 absolute top-[26px] right-[-70px] p-4 w-[300px] pointer-events-auto">
-                    <div className="flex items-center mb-2 pb-2 ">
-                      <img
-                        src={BgBook5}
-                        className="w-16 h-16 object-contain mr-2 border "
-                      />
-                      <div className="flex items-center ">
-                        <p className="text-[16px] font-bold text-theme-color">
-                          Sach
-                        </p>
-                        <p className="text-[14px] text-textGray font-[500]">
-                          222
-                        </p>
-                      </div>
-                    </div>
+                    {cartItems.map((item) => (
+                      <Link to={`/product-detail/${item.id}`} key={item.id}>
+                        <div className="flex items-center mb-2 pb-2 ">
+                          <img
+                            src={`http://localhost:4000/uploads/${item.image}`}
+                            className="w-16 h-16 object-contain mr-2 border "
+                          />
+                          <div className="flex items-center flex-col">
+                            <>
+                              <p className="text-[16px] font-bold text-theme-color">
+                                {item.name}
+                              </p>
+                            </>
+
+                            <p className="text-[14px] text-textGray font-[500]">
+                              {formatPrice(item.price)} x{item.quantityInCart}
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
                     <div className="flex justify-between items-center pb-2 border-t border-b">
                       <p className="text-[16px] text-textGray font-medium">
                         Tổng tiền
                       </p>
                       <p className="text-[18px] text-theme-color font-bold">
-                        1
+                        {formatPrice(cartTotal)}
                       </p>
                     </div>
                     <div className="flex justify-between pb-2 pt-2">

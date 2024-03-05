@@ -422,12 +422,7 @@ const Checkout = () => {
                       <div className="img w-[70px] h-[70px] border rounded">
                         <img
                           className="w-full h-full object-cover rounded"
-                          src={`http://localhost:4000/${
-                            item.images && item.images.length > 0
-                              ? item.images[0].image_url || item.images[0]
-                              : ""
-                          }`}
-                          alt={item.name}
+                          src={`http://localhost:4000/uploads/${item.image}`}
                         />
                       </div>
                       <div className="flex flex-col gap-2">
@@ -439,7 +434,7 @@ const Checkout = () => {
                             X {item.quantityInCart} {item.unit}
                           </p>
                         </div>
-                        {userInfo.distances &&
+                        {/* {userInfo.distances &&
                         userInfo.distances[index] !== undefined ? (
                           <p className="text-[15px] text-textGray font-normal">
                             Khoảng cách: {userInfo.distances[index]} Km
@@ -448,7 +443,7 @@ const Checkout = () => {
                           <p className="text-[15px] text-textGray font-normal">
                             Khoảng cách không xác định
                           </p>
-                        )}
+                        )} */}
                       </div>
                     </div>
                     <div className="">
