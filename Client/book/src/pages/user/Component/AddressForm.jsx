@@ -3,17 +3,19 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 
 const AddressForm = () => {
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
-  const [street, setStreet] = useState("");
+
   const [savedAddresses, setSavedAddresses] = useState([]);
+
+  const [province, setProvince] = useState([]);
+  const [district, setDistrict] = useState([]);
+  const [ward, setWard] = useState([]);
+
+  const [street, setStreet] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  // State cho các lỗi
   const [errors, setErrors] = useState({
     province: "",
     district: "",
@@ -24,83 +26,22 @@ const AddressForm = () => {
 
   const userId = useSelector((state) => state.user.userId);
 
-  useEffect(() => {
-    // Preload the first province's districts and wards
-    if (provinces.length > 0) {
-      setDistricts(provinces[0]?.districts || []);
-      setWards(provinces[0]?.districts[0]?.wards || []);
-    }
-  }, [provinces]);
-
-  const handleProvinceChange = (event) => {
-    const selectedProvinceCode = event.target.value;
-    setSelectedProvince(selectedProvinceCode);
-    setErrors({ ...errors, province: "" }); // Reset lỗi khi chọn tỉnh/thành phố
-
-    const selectedProvinceData = provinces.find(
-      (province) => province.code === parseInt(selectedProvinceCode)
-    );
-    setDistricts(selectedProvinceData.districts);
-    setSelectedDistrict(selectedProvinceData.districts[0]?.code);
-    setWards(selectedProvinceData.districts[0]?.wards);
-    setSelectedWard(selectedProvinceData.districts[0]?.wards[0]?.code);
-  };
-
-  const handleStreetChange = (event) => {
-    setStreet(event.target.value);
-    setErrors({ ...errors, street: "" }); // Reset lỗi khi điền tên đường
-  };
-
-  const validateForm = () => {
-    let valid = true;
-    const newErrors = { ...errors };
-
-    if (!selectedProvince) {
-      newErrors.province = "Vui lòng chọn tỉnh/thành phố";
-      valid = false;
-    }
-
-    if (!selectedDistrict) {
-      newErrors.district = "Vui lòng chọn quận/huyện";
-      valid = false;
-    }
-
-    if (!selectedWard) {
-      newErrors.ward = "Vui lòng chọn phường/xã";
-      valid = false;
-    }
-
-    if (!street.trim()) {
-      newErrors.street = "Vui lòng nhập tên đường";
-      valid = false;
-    }
-
-    setErrors(newErrors);
-    return valid;
-  };
-
   const handleSaveAddress = async () => {
-    // Validate form trước khi lưu
     if (!validateForm()) {
       return;
     }
-
-    // Save the address to the list
-    const selectedProvinceName = provinces.find(
-      (province) => province.code === parseInt(selectedProvince)
+    const selectedProvinceName = province.find(
+      (prov) => prov.code === parseInt(selectedProvince)
     )?.name;
 
-    const selectedDistrictName = districts.find(
-      (district) => district.code === parseInt(selectedDistrict)
+    const selectedDistrictName = district.find(
+      (dist) => dist.code === parseInt(selectedDistrict)
     )?.name;
 
-    const selectedWardName = wards.find(
-      (ward) => ward.code === parseInt(selectedWard)
+    const selectedWardName = ward.find(
+      (wr) => wr.code === parseInt(selectedWard)
     )?.name;
 
-    // Thực hiện Geocoding
-
-    // Lưu địa chỉ vào danh sách và gửi lên server
     const newAddress = {
       province: selectedProvinceName,
       district: selectedDistrictName,
@@ -112,136 +53,158 @@ const AddressForm = () => {
     setSavedAddresses([...savedAddresses, newAddress]);
     saveAddressToServer(newAddress);
 
-    console.log(newAddress);
-
-    // window.location.reload();
+    console.log("Dữ liệu gửi lên server:", newAddress);
   };
 
   const saveAddressToServer = (address) => {
+    console.log("Dữ liệu gửi đi:", address);
     axios
       .post("http://localhost:4000/update-shipping-address", {
         userId,
-        address,
+        address: {
+          province: selectedProvince,
+          district: selectedDistrict,
+          ward: selectedWard,
+          street,
+          phoneNumber,
+        },
       })
+
       .then((response) => {
         console.log("Đã gửi địa chỉ lên server:", response.data);
-        // Xử lý phản hồi từ server nếu cần
       })
       .catch((error) => {
         console.error("Lỗi khi gửi địa chỉ lên server:", error);
       });
   };
+  const validateForm = () => {
+    let errors = {};
+    let formIsValid = true;
 
+    if (!selectedProvince) {
+      formIsValid = false;
+      errors.province = "Vui lòng chọn tỉnh/thành phố.";
+    }
+
+    if (!selectedDistrict) {
+      formIsValid = false;
+      errors.district = "Vui lòng nhập quận/huyện.";
+    }
+
+    if (!selectedWard) {
+      formIsValid = false;
+      errors.ward = "Vui lòng nhập phường/xã.";
+    }
+
+    if (!street) {
+      formIsValid = false;
+      errors.street = "Vui lòng nhập tên đường.";
+    }
+
+    if (!phoneNumber) {
+      formIsValid = false;
+      errors.phoneNumber = "Vui lòng nhập số điện thoại.";
+    }
+
+    setErrors(errors);
+    return formIsValid;
+  };
   return (
     <div>
       <h2>Chọn địa chỉ giao hàng</h2>
 
-      <form className="mb-4">
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Tỉnh/Thành phố:
-          </label>
-          <select
-            className={`border rounded p-2 w-full ${
-              errors.province ? "border-red-500" : ""
-            }`}
-            value={selectedProvince}
-            onChange={handleProvinceChange}
-          >
-            <option value="">Chọn tỉnh/thành phố</option>
-            {provinces.map((province) => (
-              <option key={province.code} value={province.code}>
-                {province.name}
-              </option>
-            ))}
-          </select>
-          {errors.province && (
-            <p className="text-red-500 text-sm">{errors.province}</p>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Quận/Huyện:
-          </label>
-          <select
-            className={`border rounded p-2 w-full ${
-              errors.district ? "border-red-500" : ""
-            }`}
-            value={selectedDistrict}
-            onChange={handleDistrictChange}
-          >
-            <option value="">Chọn quận/huyện</option>
-            {districts.map((district) => (
-              <option key={district.code} value={district.code}>
-                {district.name}
-              </option>
-            ))}
-          </select>
-          {errors.district && (
-            <p className="text-red-500 text-sm">{errors.district}</p>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Phường/Xã:
-          </label>
-          <select
-            className={`border rounded p-2 w-full ${
-              errors.ward ? "border-red-500" : ""
-            }`}
-            value={selectedWard}
-            onChange={handleWardChange}
-          >
-            <option value="">Chọn phường/xã</option>
-            {wards.map((ward) => (
-              <option key={ward.code} value={ward.code}>
-                {ward.name}
-              </option>
-            ))}
-          </select>
-          {errors.ward && <p className="text-red-500 text-sm">{errors.ward}</p>}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Tên đường:
-          </label>
-          <input
-            type="text"
-            className={`border rounded p-2 w-full ${
-              errors.street ? "border-red-500" : ""
-            }`}
-            value={street}
-            onChange={handleStreetChange}
-          />
-          {errors.street && (
-            <p className="text-red-500 text-sm">{errors.street}</p>
-          )}
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Số điện thoại:
-          </label>
-          <input
-            type="text"
-            className={`border rounded p-2 w-full ${
-              errors.phoneNumber ? "border-red-500" : ""
-            }`}
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-          {errors.phoneNumber && (
-            <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
-          )}
-        </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Tỉnh/Thành phố:
+        </label>
+        <input
+          type="text"
+          className={`border rounded p-2 w-full ${
+            errors.province ? "border-red-500" : ""
+          }`}
+          placeholder="Nhập tỉnh/thành phố"
+          value={selectedProvince}
+          onChange={(e) => setSelectedProvince(e.target.value)}
+        />
+        {errors.province && (
+          <p className="text-red-500 text-sm">{errors.province}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Quận/Huyện:
+        </label>
 
-        <button
-          type="button"
-          className="bg-primaryGreen text-white px-4 py-2 rounded-md"
-          onClick={handleSaveAddress}
-        >
-          Lưu địa chỉ
-        </button>
-      </form>
+        <input
+          type="text"
+          className={`border rounded p-2 w-full ${
+            errors.district ? "border-red-500" : ""
+          }`}
+          placeholder="Nhập quận/huyện"
+          value={selectedDistrict}
+          onChange={(e) => setSelectedDistrict(e.target.value)}
+        />
+        {errors.district && (
+          <p className="text-red-500 text-sm">{errors.district}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Phường/Xã:
+        </label>
+        <input
+          type="text"
+          className={`border rounded p-2 w-full ${
+            errors.ward ? "border-red-500" : ""
+          }`}
+          placeholder="Nhập phường/xã"
+          value={selectedWard}
+          onChange={(e) => setSelectedWard(e.target.value)}
+        />
+        {errors.ward && <p className="text-red-500 text-sm">{errors.ward}</p>}
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Tên đường:
+        </label>
+        <input
+          type="text"
+          className={`border rounded p-2 w-full ${
+            errors.street ? "border-red-500" : ""
+          }`}
+          placeholder="Nhập tên đường"
+          value={street}
+          onChange={(e) => setStreet(e.target.value)}
+        />
+        {errors.street && (
+          <p className="text-red-500 text-sm">{errors.street}</p>
+        )}
+      </div>
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-bold mb-2">
+          Số điện thoại:
+        </label>
+        <input
+          type="text"
+          className={`border rounded p-2 w-full ${
+            errors.phoneNumber ? "border-red-500" : ""
+          }`}
+          placeholder="Nhập số điện thoại"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+        {errors.phoneNumber && (
+          <p className="text-red-500 text-sm">{errors.phoneNumber}</p>
+        )}
+      </div>
+
+      <button
+        type="button"
+        className="bg-primaryGreen text-white px-4 py-2 rounded-md"
+        onClick={handleSaveAddress}
+      >
+        Lưu địa chỉ
+      </button>
     </div>
   );
 };

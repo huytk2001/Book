@@ -14,6 +14,8 @@ import { ArrowLeft } from "react-feather";
 import { useNavigate } from "react-router-dom";
 
 export default function ViewCart() {
+  const maxQuantities = useSelector((state) => state.cart.maxQuantities);
+
   const [isChecked, setIsChecked] = useState(false);
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);

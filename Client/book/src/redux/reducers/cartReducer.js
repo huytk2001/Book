@@ -1,5 +1,6 @@
 const initialState = {
   items: [],
+  maxQuantities: {},
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -147,6 +148,15 @@ const cartReducer = (state = initialState, action) => {
       return {
         ...state,
         items: [],
+      };
+
+    case "SET_MAX_QUANTITY":
+      return {
+        ...state,
+        maxQuantities: {
+          ...state.maxQuantities,
+          [action.payload.productId]: action.payload.maxQuantity,
+        },
       };
 
     default:

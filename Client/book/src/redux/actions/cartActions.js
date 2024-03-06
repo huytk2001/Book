@@ -4,7 +4,15 @@ export const addToCart = (product) => {
     payload: product,
   };
 };
-
+export const setMaxQuantity = (productId, maxQuantity) => {
+  return {
+    type: "SET_MAX_QUANTITY",
+    payload: {
+      productId,
+      maxQuantity,
+    },
+  };
+};
 export const removeFromCart = (productId) => {
   return {
     type: "REMOVE_FROM_CART",

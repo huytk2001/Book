@@ -154,77 +154,41 @@ const Checkout = () => {
     fetchSellerCoordinates();
   }, [items]);
 
-  const calculateDistance = (fromLocation, toLocation) => {
-    try {
-      if (fromLocation && toLocation) {
-        const { google } = window;
+  // const calculateDistance = (fromLocation, toLocation) => {
+  //   try {
+  //     if (fromLocation && toLocation) {
+  //       const { google } = window;
 
-        if (google) {
-          const point1 = new google.maps.LatLng(
-            fromLocation.latitude,
-            fromLocation.longitude
-          );
-          const point2 = new google.maps.LatLng(
-            toLocation.latitude,
-            toLocation.longitude
-          );
+  //       if (google) {
+  //         const point1 = new google.maps.LatLng(
+  //           fromLocation.latitude,
+  //           fromLocation.longitude
+  //         );
+  //         const point2 = new google.maps.LatLng(
+  //           toLocation.latitude,
+  //           toLocation.longitude
+  //         );
 
-          const distance =
-            google.maps.geometry.spherical.computeDistanceBetween(
-              point1,
-              point2
-            );
+  //         const distance =
+  //           google.maps.geometry.spherical.computeDistanceBetween(
+  //             point1,
+  //             point2
+  //           );
 
-          // Convert distance to kilometers and round to one decimal place
-          const distanceInKm = (distance / 1000).toFixed(2);
-          return parseFloat(distanceInKm);
-        } else {
-          return null;
-        }
-      } else {
-        return null;
-      }
-    } catch (e) {
-      console.error("Error calculating distance: ", e);
-      return null;
-    }
-  };
-
-  // Tính toán khoảng cách từ userId đến từng người bán
-  useEffect(() => {
-    let userCoordinates;
-
-    try {
-      const cleanedCoordinates = userInfo.coordinates.replace(/\\/g, "");
-      userCoordinates = JSON.parse(cleanedCoordinates);
-    } catch (error) {
-      console.error("Lỗi khi phân tích JSON: ", error);
-      return;
-    }
-
-    // Đảm bảo rằng sellerCoordinates không rỗng
-    if (sellerCoordinates.length === 0) {
-      console.warn("Tọa độ của người bán đang trống.");
-      return;
-    }
-
-    // Tính toán khoảng cách từ userId đến từng người bán
-    const distances = sellerCoordinates.map((sellerLocation) => {
-      const distance = calculateDistance(userCoordinates, sellerLocation);
-      // console.log(`Khoảng cách đến người bán: ${distance} km`);
-      return distance;
-    });
-
-    // Chỉ cập nhật trạng thái nếu khoảng cách đã thay đổi
-    if (!isEqual(userInfo.distances, distances)) {
-      setUserInfo((prevUserInfo) => ({
-        ...prevUserInfo,
-        distances: distances,
-      }));
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo, sellerCoordinates]);
+  //         // Convert distance to kilometers and round to one decimal place
+  //         const distanceInKm = (distance / 1000).toFixed(2);
+  //         return parseFloat(distanceInKm);
+  //       } else {
+  //         return null;
+  //       }
+  //     } else {
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     console.error("Error calculating distance: ", e);
+  //     return null;
+  //   }
+  // };
 
   const formatPrice = (price) => {
     const formattedPrice = Number(price).toLocaleString("vi-VN", {
@@ -434,16 +398,6 @@ const Checkout = () => {
                             X {item.quantityInCart} {item.unit}
                           </p>
                         </div>
-                        {/* {userInfo.distances &&
-                        userInfo.distances[index] !== undefined ? (
-                          <p className="text-[15px] text-textGray font-normal">
-                            Khoảng cách: {userInfo.distances[index]} Km
-                          </p>
-                        ) : (
-                          <p className="text-[15px] text-textGray font-normal">
-                            Khoảng cách không xác định
-                          </p>
-                        )} */}
                       </div>
                     </div>
                     <div className="">
