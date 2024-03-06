@@ -5,13 +5,19 @@ const categoryModel = require("../models/api.category.model");
 
 exports.index = async function (req, res) {
   try {
-    categoryModel.getAll(req, function (err, data, totalPage, _page, _name) {
-      res.send({
-        data: data ? data : [],
-        totalPage: totalPage,
-        _page: parseInt(_page),
-        _name: _name,
+    const { data, _name } = await new Promise((resolve, reject) => {
+      categoryModel.getAll(req, function (err, data, totalPage, _page, _name) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ data, _name });
+        }
       });
+    });
+
+    res.send({
+      data: data ? data : [],
+      _name: _name,
     });
   } catch (error) {
     console.error(error);

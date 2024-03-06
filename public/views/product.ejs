@@ -232,7 +232,7 @@
                       <th>Author</th>
                       <th>Status</th>
                       <th>Request</th>
-                      <th>Action</th>
+                      <th>Discount</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -254,9 +254,10 @@
                         <% } %>
                       </td>
                       <td><%= product.quantity %></td>
-                      <td><%= product.author_id %></td>
+                      <td><%= product.author %></td>
                       <td><%= product.status %></td>
                       <td><%= product.request %></td>
+                      <td><%= product.discount %></td>
                       <td class="text-right">
                         <a
                           href="/product-edit/<%= product.id %>"

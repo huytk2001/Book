@@ -244,6 +244,16 @@
                                         <input style="outline: none" type="text" class="form-control" name="quantity" value="<%= product.quantity %>" placeholder="Nhập số lượng" />
                                     </div>
                                     <div class="form-group">
+                                        <label for="">Tác giả</label>
+                                        <input style="outline: none" type="text" class="form-control" name="author" value="<%= product.author %>" placeholder="Nhập tên tác giả" />
+
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Giảm giá </label>
+                                        <input style="outline: none" type="text" class="form-control" name="discount" value="<%= product.discount %>" placeholder="Nhập tên tác giả" />
+
+                                    </div>
+                                    <div class="form-group">
                                         <label for="image">Hình ảnh:</label>
                                         <input type="file" class="form-control" id="image" name="image" onchange="showImage(this)" />
                                     </div>

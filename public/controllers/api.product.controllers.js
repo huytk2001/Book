@@ -20,7 +20,37 @@ exports.index = async function (req, res) {
     res.status(500).send("Lỗi máy chủ nội bộ");
   }
 };
+exports.getProductById = async function (req, res) {
+  try {
+    const productId = req.params.id;
 
+    const product = await productModel.getById(productId);
+    if (!product) {
+      return res.status(404).send({ error: "Sản phẩm không tồn tại" });
+    }
+    res.send({ result: product });
+  } catch (error) {
+    console.error("Lỗi trong quá trình lấy thông tin sản phẩm:", error);
+    res.status(500).send({ error: "Lỗi máy chủ nội bộ" });
+  }
+};
+
+exports.getAllProductsByCategory = async function (req, res) {
+  try {
+    const category_id = req.params.categoryID;
+    console.log(category_id);
+    const products = await productModel.getByCategoryId(category_id);
+    if (!products || products.length === 0) {
+      return res
+        .status(404)
+        .send({ error: "Không có sản phẩm nào thuộc danh mục này" });
+    }
+    res.send({ data: products });
+  } catch (error) {
+    console.error("Lỗi trong quá trình lấy thông tin sản phẩm:", error);
+    res.status(500).send({ error: "Lỗi máy chủ nội bộ" });
+  }
+};
 exports.edit = async function (req, res) {
   let sql_cats = "SELECT id, name From categories order by name asc";
   let id = req.params.id;

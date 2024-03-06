@@ -21,6 +21,7 @@ const apiCategoryRoute = require("./public/views/Route/api.category.route");
 const apiAccountRoute = require("./public/views/Route/api.account.route");
 const loginRoute = require("./public/views/Route/login.route");
 const employerRoute = require("./public/views/Route/employer.route");
+const orderRoutes = require("./public/views/Route/api.order.route");
 const imageUploadRouter = require("./public/config/imageUpload");
 const multer = require("multer");
 const flash = require("connect-flash");
@@ -69,7 +70,7 @@ app.post("/uploads", upload.single("image"), (req, res) => {
 app.use(apiProductRoute);
 app.use(apiCategoryRoute);
 app.use(apiAccountRoute);
-
+app.use(orderRoutes);
 app.use(loginRoute);
 app.use(function (req, res, next) {
   let accountJson = sessionstorage.getItem("admin_login");
