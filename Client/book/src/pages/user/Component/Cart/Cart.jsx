@@ -62,12 +62,21 @@ export default function Cart() {
   };
 
   const formatPrice = (price) => {
-    const formattedPrice = Number(price).toLocaleString("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    });
+    // Chuyển đổi giá trị thành chuỗi và tách phần nguyên và phần thập phân
+    const [integerPart, decimalPart] = price.toString().split(".");
 
-    return formattedPrice;
+    // Định dạng phần nguyên
+    let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Nếu có phần thập phân, thêm vào định dạng
+    if (decimalPart !== undefined) {
+      formattedInteger += "." + decimalPart.padEnd(3, "0"); // Sử dụng padEnd để thêm số 0 vào phần thập phân
+    } else {
+      formattedInteger += ".000"; // Nếu không có phần thập phân, thêm '.000' vào cuối
+    }
+
+    // Thêm ký tự 'đ' vào cuối chuỗi định dạng
+    return formattedInteger + "đ";
   };
 
   const handleProceedToCheckout = () => {

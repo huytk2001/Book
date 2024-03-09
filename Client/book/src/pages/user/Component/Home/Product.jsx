@@ -37,7 +37,23 @@ export default function Product() {
         setLoading(false);
       });
   };
+  const formatPrice = (price) => {
+    // Chuyển đổi giá trị thành chuỗi và tách phần nguyên và phần thập phân
+    const [integerPart, decimalPart] = price.toString().split(".");
 
+    // Định dạng phần nguyên
+    let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Nếu có phần thập phân, thêm vào định dạng
+    if (decimalPart !== undefined) {
+      formattedInteger += "." + decimalPart.padEnd(3, "0"); // Sử dụng padEnd để thêm số 0 vào phần thập phân
+    } else {
+      formattedInteger += ".000"; // Nếu không có phần thập phân, thêm '.000' vào cuối
+    }
+
+    // Thêm ký tự 'đ' vào cuối chuỗi định dạng
+    return formattedInteger + "đ";
+  };
   const fetchRandomFeaturedProducts = (url) => {
     fetch(url)
       .then((response) => response.json())
@@ -100,26 +116,29 @@ export default function Product() {
               {loading ? (
                 <p>Loading...</p>
               ) : products.length ? (
-                products.map((product) => (
-                  <NavLink
-                    to={`/product-detail/${product.id}`}
-                    key={product.id}
-                  >
-                    <div className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4">
-                      <img
-                        className="max-h-[190px] max-w-full rounded-md overflow-hidden"
-                        src={`http://localhost:4000/uploads/${product.image}`}
-                        alt={product.title}
-                      />
-                      <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
-                        {product.name}
-                      </h6>
-                      <p className="text-[16px] font-[600] text-center text-textred">
-                        {product.price}đ
-                      </p>
-                    </div>
-                  </NavLink>
-                ))
+                products.map(
+                  (product) =>
+                    product.status === "1" && (
+                      <NavLink
+                        to={`/product-detail/${product.id}`}
+                        key={product.id}
+                      >
+                        <div className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4">
+                          <img
+                            className="max-h-[190px] max-w-full rounded-md overflow-hidden"
+                            src={`http://localhost:4000/uploads/${product.image}`}
+                            alt={product.title}
+                          />
+                          <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
+                            {product.name}
+                          </h6>
+                          <p className="text-[16px] font-[600] text-center text-textred">
+                            {formatPrice(product.price)} {product.unit}
+                          </p>
+                        </div>
+                      </NavLink>
+                    )
+                )
               ) : (
                 <p>No products available.</p>
               )}

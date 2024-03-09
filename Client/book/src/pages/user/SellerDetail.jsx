@@ -3,7 +3,7 @@ import Product from "./Component/Category/Product";
 
 import SideBar from "./Component/Category/SideBar";
 import Footer from "../../pages/user/common/Footer";
-
+import TitleCategory from "../user/common/Title/PriceFilter";
 export default function SellerDetail() {
   return (
     <>

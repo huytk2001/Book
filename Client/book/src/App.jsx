@@ -10,6 +10,7 @@ import UserInfo from "./pages/user/ProfileUser";
 import ProductCategory from "./pages/user/Component/Category/ProductCategory";
 import SellerDetail from "./pages/user/SellerDetail";
 import Checkout from "./pages/user/Component/Cart/Checkout";
+import OrderSuccess from "./pages/user/Component/Cart/OrderSuccess";
 function App() {
   return (
     <Routes>
@@ -24,6 +25,7 @@ function App() {
       <Route path="/category" element={<ProductCategory />} />
       <Route path="/filter-product/:id" element={<SellerDetail />} />
       <Route path="/checkout" element={<Checkout />} />
+      <Route path="/order-success/:orderId" element={<OrderSuccess />} />{" "}
     </Routes>
   );
 }

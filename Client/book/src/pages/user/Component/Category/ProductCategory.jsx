@@ -106,14 +106,22 @@ export default function ProductCategory({ selectedItem }) {
   };
 
   const formatPrice = (price) => {
-    const formattedPrice = Number(price).toLocaleString("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    });
+    // Chuyển đổi giá trị thành chuỗi và tách phần nguyên và phần thập phân
+    const [integerPart, decimalPart] = price.toString().split(".");
 
-    return formattedPrice;
+    // Định dạng phần nguyên
+    let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Nếu có phần thập phân, thêm vào định dạng
+    if (decimalPart !== undefined) {
+      formattedInteger += "." + decimalPart.padEnd(3, "0"); // Sử dụng padEnd để thêm số 0 vào phần thập phân
+    } else {
+      formattedInteger += ".000"; // Nếu không có phần thập phân, thêm '.000' vào cuối
+    }
+
+    // Thêm ký tự 'đ' vào cuối chuỗi định dạng
+    return formattedInteger + "đ";
   };
-
   const handleProductClick = (productId) => {
     console.log("ID sản phẩm:", productId);
     // Các hành động bổ sung có thể được thêm vào đây
@@ -121,7 +129,7 @@ export default function ProductCategory({ selectedItem }) {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-4 w-full">
+    <div className="grid grid-cols-4 gap-4 w-full my-5">
       {loading ? (
         <p>Đang tải sản phẩm...</p>
       ) : (

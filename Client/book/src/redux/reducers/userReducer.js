@@ -22,16 +22,7 @@ const userReducer = (state = initialState, action) => {
         isAuthenticated: true,
       };
     case "LOGOUT": {
-      return {
-        ...state,
-        user: null,
-        userId: null,
-        email: null,
-        role: null,
-        accessToken: null,
-        refreshToken: null,
-        isAuthenticated: false,
-      };
+      return initialState; // Trả về trạng thái khởi tạo để xóa thông tin người dùng
     }
     default:
       return state;
@@ -39,3 +30,21 @@ const userReducer = (state = initialState, action) => {
 };
 
 export default userReducer;
+
+export const login = (user, userId, email, role, accessToken, refreshToken) => {
+  return {
+    type: "LOGIN",
+    user,
+    userId,
+    email,
+    role,
+    accessToken,
+    refreshToken,
+  };
+};
+
+export const logout = () => {
+  return {
+    type: "LOGOUT",
+  };
+};

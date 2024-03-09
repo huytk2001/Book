@@ -9,7 +9,7 @@ import { Link } from "react-feather";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
-
+import TitleLogin from "../user/common/Title/TitleLogin";
 const schema = yup
   .object({
     email: yup.string().required("Vui lòng nhập email"),
@@ -77,6 +77,7 @@ export default function Register() {
   return (
     <>
       <Header />
+      <TitleLogin />
       <section className="login-section py-10  flex relative items-center z-0 justify-center ">
         <div className="container-fluid-lg mx-auto md:px-0">
           <div className="row w-[100%]   md:mx-[-12px]  ">

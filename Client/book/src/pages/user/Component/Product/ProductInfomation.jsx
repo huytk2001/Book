@@ -11,18 +11,21 @@ import {
   addMultipleToCart,
   updateQuantity,
 } from "../../../../redux/actions/cartActions";
-
+import TitleProductInfo from "../../common/Title/TitleProduct";
 export default function ProductInformation() {
-  const [product, setProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [quantityErrors, setQuantityErrors] = useState({});
-  const dispatch = useDispatch();
-  const items = useSelector((state) => state.cart.items);
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const [maxQuantity, setMaxQuantity] = useState(1);
+  const [product, setProduct] = useState(null); // Thông tin sản phẩm
+  const [quantity, setQuantity] = useState(1); // Số lượng sản phẩm
+  const [quantityErrors, setQuantityErrors] = useState({}); // Lỗi liên quan đến số lượng
+  const [expanded, setExpanded] = useState(false); // Trạng thái mở rộng mô tả
+  const [showToggle, setShowToggle] = useState(false); // Trạng thái hiển thị nút "Xem thêm"
+  const dispatch = useDispatch(); // Hook để dispatch các actions
+  const items = useSelector((state) => state.cart.items); // Danh sách sản phẩm trong giỏ hàng
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated); // Trạng thái xác thực người dùng
+  const navigate = useNavigate(); // Hook để điều hướng trang
+  const { id } = useParams(); // Lấy id sản phẩm từ URL
+  const [maxQuantity, setMaxQuantity] = useState(1); // Số lượng tối đa có thể đặt hàng
 
+  // Khi component được render, fetch thông tin sản phẩm từ API
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -30,8 +33,9 @@ export default function ProductInformation() {
           `http://localhost:4000/api/product/${id}`
         );
         const fetchedProduct = response.data.result[0];
-        setProduct(fetchedProduct);
-        setMaxQuantity(fetchedProduct.quantity); // Assuming the API response includes quantity information
+        setProduct(fetchedProduct); // Cập nhật thông tin sản phẩm
+        setMaxQuantity(fetchedProduct.quantity); // Cập nhật số lượng tối đa
+        setShowToggle(fetchedProduct.description.length > 255); // Kiểm tra xem nên hiển thị nút "Xem thêm" hay không
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -81,7 +85,18 @@ export default function ProductInformation() {
       }
     }
   };
+  const toggleDescription = () => {
+    setExpanded(!expanded);
+  };
 
+  // Hàm lấy nội dung mô tả sản phẩm dựa trên trạng thái mở rộng
+  const getDescription = () => {
+    if (expanded) {
+      return product.description;
+    } else {
+      return product.description.slice(0, 255); // Hiển thị chỉ 250 ký tự đầu tiên
+    }
+  };
   const handleAddToCartAndProceed = () => {
     handleAddToCart();
     if (isAuthenticated) {
@@ -103,17 +118,11 @@ export default function ProductInformation() {
     }
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
-  };
-
   return (
     <>
       <Header />
       <ToastContainer />
+      <TitleProductInfo />
       <section className="product-info w-[1280px] h-auto bg-textbg m-auto">
         {product && (
           <div
@@ -123,7 +132,7 @@ export default function ProductInformation() {
             <div className="w-[484px] h-auto flex flex-col">
               <div className="flex">
                 <div>
-                  <img
+                  {/* <img
                     src={BgI}
                     className="max-w-[76px] max-h-[76px] mt-1.5"
                     alt="Product thumbnail"
@@ -142,7 +151,7 @@ export default function ProductInformation() {
                     src={BgI}
                     className="max-w-[76px] max-h-[76px] mt-1.5"
                     alt="Product thumbnail"
-                  />
+                  /> */}
                 </div>
                 <div className="px-1.5 py-1.5">
                   <img
@@ -176,19 +185,39 @@ export default function ProductInformation() {
             </div>
             <div className="w-[calc(100%-484px)] pl-9">
               <div className="flex flex-col">
-                <h1 className="text-[1.7em] font-[600] text-textBlack leading-6 pb-4 break-words">
-                  {product.name}
-                </h1>
+                <div className="flex justify-between">
+                  <div>
+                    <h1 className="text-[1.7em] font-[600] text-textBlack leading-6 pb-4 break-words">
+                      {product.name}
+                    </h1>
+                  </div>
+                  <div className="order-last">
+                    <span className="font-[400] text-[1em] pb-2">Tác giả:</span>
+                    <span className="font-[600] text-[1em] pl-2">
+                      {product.author}
+                    </span>
+                  </div>
+                </div>
+
                 <div className="max-w-[100px] w-full h-[3px] bg-textGray"></div>
                 <div className="flex items-center mt-4 pt-2 pb-4">
                   <span className="text-textred text-[32px] leading-[32px] font-[700]">
-                    {formatPrice(product.price)}
+                    {product.price} {product.unit}
                   </span>
                 </div>
                 <p className="font-[400] text-[1em] pb-2">
-                  {product.description}
+                  {getDescription()}
+                  {product.description.length > 50 && (
+                    <span
+                      className="text-blue-500 cursor-pointer"
+                      onClick={toggleDescription}
+                    >
+                      {" "}
+                      {expanded ? "Rút gọn" : "Xem thêm"}
+                    </span>
+                  )}
                 </p>
-                <div className="flex h-[32px]">
+                <div className="flex h-[32px] mt-5">
                   <label
                     htmlFor="qty"
                     className="max-w-[200px] min-w-[150px] font-[650] text-[1.2em] pr-2 text-left"

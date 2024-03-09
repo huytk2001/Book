@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
+import TitleRegister from "../user/common/Title/TitleSignUp";
 const schema = yup.object().shape({
   name: yup.string().required("Vui lòng nhập tên của bạn"),
   email: yup
@@ -80,6 +81,7 @@ export default function Register() {
   return (
     <>
       <Header />
+      <TitleRegister />
       <section className="login-section py-10  flex relative items-center z-0 justify-center ">
         <div className="container-fluid-lg  ">
           <div className="row w-[100%]   mx-[-12px]  ">

@@ -16,16 +16,15 @@ import { clearCart } from "../../../../redux/actions/cartActions";
 
 import axios from "axios";
 
-import isEqual from "lodash/isEqual";
-
 const Checkout = () => {
   const items = useSelector((state) => state.cart.items);
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   const userId = useSelector((state) => state.user.userId);
-  const userIdSellers = items.map((item) => item.user?.id);
+
+  const [loadingUserInfo, setLoadingUserInfo] = useState(true);
 
   // userIdSellers sẽ là một mảng chứa các user.id
-  console.log(userIdSellers);
+
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
@@ -34,38 +33,16 @@ const Checkout = () => {
 
   const [userInfo, setUserInfo] = useState({});
 
-  const [sellerCoordinates, setSellerCoordinates] = useState([]);
-  const [sellerIds, setSellerIds] = useState([]);
-
   const [shippingFee, setShippingFee] = useState(0);
 
   // Tính tổng phí vận chuyển dựa trên mảng distances
-  const calculateTotalShippingFee = (distances) => {
-    try {
-      // Kiểm tra xem distances có hợp lệ không
-      if (distances && Array.isArray(distances)) {
-        // Tổng phí vận chuyển
-        let totalShippingFee = 0;
-
-        // Duyệt qua mảng distances và tính phí vận chuyển cho mỗi khoảng cách
-        distances.forEach((distance) => {
-          // Kiểm tra xem distance có phải là số không
-          if (typeof distance === "number" && !isNaN(distance)) {
-            // 3,000 VND cho mỗi kilometer
-            const feePerKm = 2000;
-            totalShippingFee += distance * feePerKm;
-          }
-          // Nếu distance không phải là số, bỏ qua
-        });
-
-        return totalShippingFee;
-      } else {
-        // Nếu distances không hợp lệ, trả về 0 hoặc giá trị mặc định của bạn
-        return 0; // Hoặc giá trị mặc định của bạn
-      }
-    } catch (error) {
-      console.error("Error calculating total shipping fee:", error);
-      return 0; // Trả về 0 nếu có lỗi
+  const calculateTotalShippingFee = () => {
+    if (totalPrice >= 15) {
+      return 20; // Phí vận chuyển là 20.000 nếu giá trị đơn hàng từ 150.000 đ trở lên
+    } else if (totalPrice >= 300000) {
+      return 0; // Không tính phí vận chuyển nếu giá trị đơn hàng từ 300.000 đ trở lên
+    } else {
+      return 30; // Phí vận chuyển là 30.000 cho các giá trị đơn hàng dưới 150.000 đ
     }
   };
 
@@ -93,12 +70,13 @@ const Checkout = () => {
         }
         // Gọi API với userId từ Redux state
         const response = await axios.get(
-          `http://localhost:4000/user/${userId}`
+          `http://localhost:4000/api/account/${userId}`
         );
-        const data = response.data;
+        const data = response.data.result.result;
 
         // Set state với dữ liệu người dùng
         setUserInfo(data);
+        setLoadingUserInfo(false); // Đánh dấu rằng đã hoàn thành tải thông tin người dùng
         console.log("Data user:", data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -109,94 +87,22 @@ const Checkout = () => {
     fetchUserInfo();
   }, [userId, isAuthenticated]);
 
-  useEffect(() => {
-    const fetchSellerCoordinates = async () => {
-      try {
-        const ids = items.map((item) => item.user?.id).filter(Boolean);
-        setSellerIds(ids);
-
-        // Gọi API hoặc thực hiện bất kỳ logic nào để lấy thông tin coordinates từ user_id
-        const coordinatesPromises = ids.map((sellerId) => {
-          return axios
-            .get(`http://localhost:4000/user/${sellerId}`)
-            .then((response) => response.data.coordinates)
-            .catch((error) => {
-              console.error(
-                `Error fetching coordinates for seller with id ${sellerId}:`,
-                error
-              );
-              return null;
-            });
-        });
-
-        // Chờ tất cả các promises hoàn thành và xử lý chuỗi coordinates
-        const resolvedCoordinates = await Promise.all(coordinatesPromises);
-
-        // Chuyển đổi chuỗi JSON thành đối tượng JSON
-        const jsonCoordinates = resolvedCoordinates.map((coordinate) => {
-          try {
-            const parsedCoordinate = JSON.parse(coordinate);
-            return parsedCoordinate;
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            return null;
-          }
-        });
-
-        setSellerCoordinates(jsonCoordinates);
-
-        console.log("JSON coordinates array:", jsonCoordinates);
-      } catch (error) {
-        console.error("Lỗi khi lấy thông tin coordinates:", error);
-      }
-    };
-
-    fetchSellerCoordinates();
-  }, [items]);
-
-  // const calculateDistance = (fromLocation, toLocation) => {
-  //   try {
-  //     if (fromLocation && toLocation) {
-  //       const { google } = window;
-
-  //       if (google) {
-  //         const point1 = new google.maps.LatLng(
-  //           fromLocation.latitude,
-  //           fromLocation.longitude
-  //         );
-  //         const point2 = new google.maps.LatLng(
-  //           toLocation.latitude,
-  //           toLocation.longitude
-  //         );
-
-  //         const distance =
-  //           google.maps.geometry.spherical.computeDistanceBetween(
-  //             point1,
-  //             point2
-  //           );
-
-  //         // Convert distance to kilometers and round to one decimal place
-  //         const distanceInKm = (distance / 1000).toFixed(2);
-  //         return parseFloat(distanceInKm);
-  //       } else {
-  //         return null;
-  //       }
-  //     } else {
-  //       return null;
-  //     }
-  //   } catch (e) {
-  //     console.error("Error calculating distance: ", e);
-  //     return null;
-  //   }
-  // };
-
   const formatPrice = (price) => {
-    const formattedPrice = Number(price).toLocaleString("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    });
+    // Chuyển đổi giá trị thành chuỗi và tách phần nguyên và phần thập phân
+    const [integerPart, decimalPart] = price.toString().split(".");
 
-    return formattedPrice;
+    // Định dạng phần nguyên
+    let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Nếu có phần thập phân, thêm vào định dạng
+    if (decimalPart !== undefined) {
+      formattedInteger += "." + decimalPart.padEnd(3, "0"); // Sử dụng padEnd để thêm số 0 vào phần thập phân
+    } else {
+      formattedInteger += ".000"; // Nếu không có phần thập phân, thêm '.000' vào cuối
+    }
+
+    // Thêm ký tự 'đ' vào cuối chuỗi định dạng
+    return formattedInteger + "đ";
   };
 
   const generateRandomOrderId = () => {
@@ -211,42 +117,42 @@ const Checkout = () => {
 
     return orderId;
   };
-
   const handleProceedToCheckout = async () => {
     try {
-      // Gửi thông tin đặt hàng lên server
-      const response = await axios.post("http://localhost:4000/orders", {
-        userId: userInfo.id,
-        customerName: userInfo.name,
-        shippingAddress: userInfo.shipping_address,
-        paymentMethod: "Thanh toán khi nhận hàng", // Có thể thay đổi theo cách bạn xử lý phương thức thanh toán
-        totalPrice: totalPrice + calculateTotalShippingFee(userInfo.distances),
-        status: "Đang xử lý",
-        orderCode: generateRandomOrderId(),
-        items: items.map((item) => ({
-          productId: item.id,
-          userIdSellers: String(item.user?.id),
-          nameItem: item.name,
-          quantity: item.quantityInCart,
-          price: item.price * item.quantityInCart,
-          unit: item.unit,
-        })),
-      });
+      if (!userInfo || Object.keys(userInfo).length === 0) {
+        console.log("Không có dữ liệu người dùng. Vui lòng kiểm tra lại.");
+        return;
+      }
 
-      console.log(userIdSellers);
+      const response = await axios.post(
+        "http://localhost:4000/order/place-order",
+        {
+          userId: userInfo.id,
+          customerName: userInfo.name,
+          shippingAddress: userInfo.shipping_address,
+          paymentMethod: "Thanh toán khi nhận hàng",
+          totalPrice: totalPrice + calculateTotalShippingFee(),
+          status: "Đang xử lý",
+          orderCode: generateRandomOrderId(),
+          items: items.map((item) => ({
+            productId: item.id,
+            nameItem: item.name,
+            price: item.price,
+            quantity: item.quantityInCart,
+            unit: item.unit,
+          })),
+        }
+      );
 
-      console.log(items.map((item) => String(item.user?.id)));
-
-      console.log(items);
-      console.log(response);
-
-      // Kiểm tra xem đặt hàng thành công hay không
-      if (response.status === 200) {
-        const orderId = response.data.orderId;
+      if (response.data.success) {
+        const orderId = response.data.orderId.orderId; // Accessing the orderId property
+        console.log("Đơn hàng đã được đặt thành công. ID đơn hàng:", orderId);
+        // Navigate to the order success page with the orderId
         dispatch(clearCart());
         navigate(`/order-success/${orderId}`);
       } else {
-        console.error("Error placing order:", response.data);
+        console.error("Error placing order:", response.data.error);
+        // Display error message to the user
       }
     } catch (error) {
       console.error("Error placing order:", error);
@@ -457,8 +363,8 @@ const Checkout = () => {
                 </div>
                 <div className="px-3 flex flex-col gap-1">
                   <li className="text-[13px] text-textGray font-normal">
-                    Mua sắm nông sản trực tuyến tại trang web của chúng tôi, bạn
-                    sẽ được đảm bảo chất lượng và thông tin chi tiết về từng sản
+                    Mua sắm sách trực tuyến tại trang web của chúng tôi, bạn sẽ
+                    được đảm bảo chất lượng và thông tin chi tiết về từng sản
                     phẩm.{" "}
                   </li>
                   <li className="text-[13px] text-textGray font-normal">

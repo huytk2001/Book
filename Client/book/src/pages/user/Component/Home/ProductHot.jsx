@@ -18,12 +18,22 @@ export default function ProductHot() {
   const handleCategoryClick = (category) => {
     setActiveCategory(category);
   };
-
   const formatPrice = (price) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price);
+    // Chuyển đổi giá trị thành chuỗi và tách phần nguyên và phần thập phân
+    const [integerPart, decimalPart] = price.toString().split(".");
+
+    // Định dạng phần nguyên
+    let formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Nếu có phần thập phân, thêm vào định dạng
+    if (decimalPart !== undefined) {
+      formattedInteger += "." + decimalPart.padEnd(3, "0"); // Sử dụng padEnd để thêm số 0 vào phần thập phân
+    } else {
+      formattedInteger += ".000"; // Nếu không có phần thập phân, thêm '.000' vào cuối
+    }
+
+    // Thêm ký tự 'đ' vào cuối chuỗi định dạng
+    return formattedInteger + "đ";
   };
 
   return (
@@ -75,35 +85,38 @@ export default function ProductHot() {
                     ? product.price && product.price > 0 && product.price * 0.9
                     : true
                 )
-                .map((product) => (
-                  <NavLink
-                    to={`/product-detail/${product.id}`}
-                    key={product.id}
-                    className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4"
-                  >
-                    <img
-                      className="max-h-[190px] max-w-full rounded-md overflow-hidden"
-                      src={`http://localhost:4000/uploads/${product.image}`}
-                      alt={product.title}
-                    />
-                    <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
-                      {product.name}
-                    </h6>
-                    <p className="text-[16px] font-[600] text-center text-textred">
-                      {activeCategory === "featuredProducts" ? (
-                        <>
-                          {formatPrice(product.price * 0.9)}
-                          <br />
-                          <span className="line-through">
-                            {formatPrice(product.price)}
-                          </span>{" "}
-                        </>
-                      ) : (
-                        formatPrice(product.price)
-                      )}
-                    </p>
-                  </NavLink>
-                ))}
+                .map(
+                  (product) =>
+                    product.status === "1" && (
+                      <NavLink
+                        to={`/product-detail/${product.id}`}
+                        key={product.id}
+                        className="grid justify-center items-center w-full group transition-transform duration-300 transform hover:border border-gray-300 p-4"
+                      >
+                        <img
+                          className="max-h-[190px] max-w-full rounded-md overflow-hidden"
+                          src={`http://localhost:4000/uploads/${product.image}`}
+                          alt={product.title}
+                        />
+                        <h6 className="leading-6 mt-4 text-[14px] text-center text-text2222 le">
+                          {product.name}
+                        </h6>
+                        <p className="text-[16px] font-[600] text-center text-textred">
+                          {activeCategory === "featuredProducts" ? (
+                            <>
+                              {formatPrice(product.price * 0.9)}
+                              <br />
+                              <span className="line-through">
+                                {formatPrice(product.price)}
+                              </span>{" "}
+                            </>
+                          ) : (
+                            formatPrice(product.price)
+                          )}
+                        </p>
+                      </NavLink>
+                    )
+                )}
             </div>
           </div>
         </div>
