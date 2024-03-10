@@ -7,7 +7,7 @@ const Product = {};
 Product.getAll = async function (req, callback) {
   try {
     let sql =
-      "SELECT p.*, c.name as cname FROM book p LEFT JOIN categories c ON p.categoryID = c.id";
+      "SELECT p.* , c.name as cname FROM book p LEFT JOIN categories c ON p.categoryID = c.id";
     let _name = req.query.name ? req.query.name : ""; // Ensure _name is initialized even if not provided
     let _page = req.query.page ? parseInt(req.query.page) : 1;
     let limit = 5;
@@ -82,6 +82,23 @@ Product.getByCategoryId = async function (category_id) {
 //     );
 //   }
 // };
+
+Product.searchProductsByName = async (term) => {
+  try {
+    const [results, fields] = await db.execute(
+      "SELECT p.id, p.name, p.description, p.price, p.quantity, p.status, p.unit " +
+        "FROM book p " +
+        "WHERE p.name LIKE ? AND p.status = 'Còn hàng' AND p.request = 'Đã duyệt' " +
+        "GROUP BY p.id " +
+        "LIMIT 5",
+      [`%${term}%`]
+    );
+    return results;
+  } catch (error) {
+    console.error("Error executing query:", error);
+    throw error;
+  }
+};
 
 Product.delete = function (req, callback) {
   let id = req.params.id;

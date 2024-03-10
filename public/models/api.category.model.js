@@ -10,7 +10,7 @@ Category.getAll = async function (req, callback) {
     let sql = "SELECT * FROM categories";
     let _name = req.query.name;
     let _page = req.query.page ? parseInt(req.query.page) : 1;
-    let limit = 5;
+    let limit = 10;
     let _start = (_page - 1) * limit;
 
     if (_name) {

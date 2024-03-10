@@ -59,7 +59,7 @@ exports.createOrder = async (orderData) => {
       await db
         .promise()
         .query(
-          "INSERT INTO orders_items (order_id , book_id ,  name, quantity, price, unit) VALUES (?, ?, ?, ?, ?, ?)",
+          "INSERT INTO orders_items (order_id , book_id ,name, quantity, price, unit) VALUES (?, ?, ?, ?, ?, ?)",
           orderItem
         );
 
@@ -92,5 +92,49 @@ exports.createOrder = async (orderData) => {
 
     // Return error response
     return { success: false, error: "Failed to create order" };
+  }
+};
+exports.getOrderDetails = async (userId, orderId) => {
+  try {
+    const [orderDetails] = await db
+      .promise()
+      .query(
+        "SELECT o.*, MIN(oi.id) as order_item_id, oi.book_id, p.name, p.image, oi.quantity, oi.price, oi.unit " +
+          "FROM orders o " +
+          "JOIN orders_items oi ON o.id = oi.order_id " +
+          "JOIN book p ON oi.book_id = p.id " +
+          "WHERE o.id = ? AND o.user_id = ? " +
+          "GROUP BY oi.book_id",
+        [orderId, userId]
+      );
+
+    return orderDetails;
+  } catch (error) {
+    throw error;
+  }
+};
+exports.getAllOrdersFromDatabase = async () => {
+  try {
+    // Thực hiện truy vấn tới dịch vụ cơ sở dữ liệu của bạn
+    const [rows] = await db.promise().query(
+      "SELECT o.*, oi.book_id, p.name, oi.quantity, oi.price, oi.unit, u.name AS customer_name " +
+        "FROM orders o " +
+        "JOIN orders_items oi ON o.id = oi.order_id " +
+        "JOIN book p ON oi.book_id = p.id " +
+        "JOIN users u ON o.user_id = u.id " + // Thêm phép JOIN để lấy tên khách hàng
+        "GROUP BY o.id, oi.book_id " +
+        "ORDER BY o.id DESC, oi.book_id ASC"
+    );
+
+    // Kiểm tra xem rows có phải là một mảng không
+    if (!Array.isArray(rows)) {
+      throw new Error("Invalid data format returned from database");
+    }
+
+    console.log("rows:", rows); // Log giá trị rows trước khi trả về
+
+    return rows;
+  } catch (error) {
+    throw error;
   }
 };

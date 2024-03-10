@@ -117,7 +117,16 @@ exports.update = async (req, res) => {
     }
   });
 };
-
+exports.searchProducts = async function (req, res) {
+  const term = req.query.term;
+  try {
+    const results = await productModel.searchProductsByName(term);
+    res.json(results);
+  } catch (error) {
+    console.error("Error executing query:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 exports.deleteProduct = function (req, res) {
   let id = req.params.id;
   productModel.delete(req, function (err, message, data) {
