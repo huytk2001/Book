@@ -80,8 +80,10 @@ export default function SearchProduct() {
 
         {/* Hiển thị danh sách gợi ý khi có focus và có suggestions */}
         {isFocused && suggestions.length > 0 && (
+          
           <ul className="absolute top-[40px] left-0 z-40 mt-2 p-4 w-[400px] bg-white border border-gray-300 rounded-b-[5px] overflow-hidden">
             {suggestions.map((item) => (
+             
               <li key={item.id}>
                 <Link
                   to={`/product-detail/${item.id}`}
