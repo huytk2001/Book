@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"
+    />
+    <!-- Ionicons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"
+    />
+    <!-- Theme style -->
+    <link rel="stylesheet" href="../../dist/css/AdminLTE.min.css" />
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="../../dist/css/skins/_all-skins.min.css" />
+  </head>
+
+  <body class="hold-transition login-page">
+    <div class="login-box">
+      <div class="login-logo">
+        <a href=""><b>Admin</b>Book</a>
+      </div>
+      <!-- /.login-logo -->
+      <div class="login-box-body">
+        <p class="login-box-msg">Đăng nhập trang quản trị</p>
+        <% if (err_msg) { %>
+        <div class="alert alert-danger">
+          <button
+            type="button"
+            class="close"
+            data-dismiss="alert"
+            aria-hidden="true"
+          >
+            &times;
+          </button>
+          <%= err_msg %>
+        </div>
+        <% } %>
+
+        <form action="" method="post">
+          <div class="form-group has-feedback">
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              placeholder="Email"
+            />
+            <span
+              class="glyphicon glyphicon-envelope form-control-feedback"
+            ></span>
+          </div>
+          <div class="form-group has-feedback">
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="Password"
+            />
+            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+          </div>
+          <div class="row">
+            <div class="col-xs-8">
+              <div class="checkbox">
+                <label> <input type="checkbox" /> Remember Me </label>
+              </div>
+            </div>
+            <!-- /.col -->
+            <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-block btn-flat">
+                Sign In
+              </button>
+            </div>
+            <!-- /.col -->
+          </div>
+        </form>
+
+        <!-- /.social-auth-links -->
+      </div>
+      <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+
+    <!-- jQuery 2.2.0 -->
+  </body>
+</html>
