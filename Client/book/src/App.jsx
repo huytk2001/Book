@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./pages/user/login";
 import Product from "./pages/user/product";
-import Register from "./pages/user/register";
+import Register from "./pages/user/sign-up";
 import Home from "./pages/user/home";
 import Cart from "./pages/user/Component/Cart/Cart";
 import ViewCart from "./pages/user/Component/Cart/ViewCart";
@@ -11,6 +11,7 @@ import ProductCategory from "./pages/user/Component/Category/ProductCategory";
 import SellerDetail from "./pages/user/SellerDetail";
 import Checkout from "./pages/user/Component/Cart/Checkout";
 import OrderSuccess from "./pages/user/Component/Cart/OrderSuccess";
+
 function App() {
   return (
     <Routes>

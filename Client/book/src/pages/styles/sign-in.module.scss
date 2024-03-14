@@ -1,0 +1,264 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+:root {
+  --background: #1634c9db;
+  --text: #fff;
+  --text2: #000;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins";
+}
+
+.login-form {
+  background: url(../../assets/images/full-moon.jpg);
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 20px;
+}
+
+.form-container {
+  display: flex;
+  width: 1000px;
+  height: 600px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.col-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 55%;
+  background-repeat: blur(30px);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0 30% 20% 0;
+  transition: border-radius 0.3s;
+}
+
+.image-layer {
+  position: relative;
+}
+
+.form-image-main {
+  width: 350px;
+  animation: scale-up 3s ease-in-out alternate infinite;
+}
+
+/* .from-image {
+  width: 400px;
+  position: absolute;
+  left: 0;
+} */
+
+.fi-1 {
+  animation: scale-down 3s ease-in-out alternate infinite;
+}
+
+.fi-2 {
+  animation: up-down 3s ease-in-out alternate infinite;
+}
+
+@keyframes scale-up {
+  to {
+    transition: translateY(20px);
+  }
+}
+
+@keyframes up-down {
+  to {
+    transition: translateY(20px);
+  }
+}
+
+.from-image-1 {
+  width: 200px;
+  position: absolute;
+}
+
+.from-image-2 {
+  width: 90px;
+  margin-left: 35px;
+}
+
+.from-image-3 {
+  width: 90px;
+  left: 0;
+  position: absolute;
+}
+
+.col-2 {
+  position: relative;
+  width: 45%;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.btn-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  font-weight: 500;
+  padding: 5px 30px;
+  border: none;
+  background-color: aqua;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  opacity: 0.85s;
+}
+
+.login-form {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 4vw;
+  transition: 0.3s;
+}
+
+.register-form {
+  position: absolute;
+  left: -50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 4vw;
+  transition: 0.3s;
+}
+
+.register-form .form-title {
+  margin-block: 40px 20px;
+}
+
+.form-title {
+  margin: 40px 0;
+  color: var(--text);
+  font-size: 28px;
+  font-weight: 600px;
+}
+
+.form-inputs {
+  width: 100%;
+}
+
+.input-box {
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  height: 55px;
+  padding: 0 15px;
+  margin: 10px 0;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 10px;
+}
+
+::placeholder {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.input-box .icon {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  color: var(--text);
+}
+
+.forget-pass {
+  display: flex;
+  justify-content: right;
+  gap: 14px;
+}
+
+.forget-pass a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.forget-pass a:hover {
+  text-decoration: underline;
+}
+
+.input-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 55px;
+  padding: 0 15px;
+  margin: 10px 0;
+  color: var(--text);
+  background: var(--background);
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.social-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-login i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: 0.2s;
+  border-radius: 50%;
+}
+
+.social-login i:hover {
+  transform: scale(0.8);
+}
+
+@media (max-width: 892px) {
+  .form-container {
+    width: 80%;
+  }
+  .col-1 {
+    display: none;
+  }
+  .col-2 {
+    width: 100%;
+  }
+}

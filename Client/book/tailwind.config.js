@@ -27,7 +27,10 @@ export default {
         textwhite: "#fff",
         textred: "#C92127",
         textbg: "#f0f0f0",
+        background: "#1634c9db",
         texthot: "#FCDDEF",
+        custom: "#21264D",
+        input: "rgba(255, 255, 255, 0.2)",
 
         "theme-color": "#5ecee4",
         "them-gray": "#f8f8f8",

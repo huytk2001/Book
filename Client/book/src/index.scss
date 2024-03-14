@@ -15,6 +15,13 @@ code {
     monospace;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins";
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -91,4 +98,107 @@ code {
   /* Khoảng cách giữa icon và văn bản */
 }
 
-/* ... Code hiện tại ... */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+:root {
+  --background: #1634c9db;
+  --text: #fff;
+  --text2: #000;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins";
+}
+
+.login-section {
+  background: url(./assets/images/full-moon.jpg);
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 20px;
+}
+
+.form-container {
+  display: flex;
+  width: 1000px;
+  height: 600px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  position: relative;
+}
+
+.col-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 55%;
+  background-repeat: blur(30px);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 0 30% 20% 0;
+  transition: border-radius 0.3s;
+}
+
+.image-layer {
+  position: relative;
+}
+
+.form-image-main {
+  animation: scale-up 3s ease-in-out alternate infinite;
+}
+
+/* .from-image {
+  width: 400px;
+  position: absolute;
+  left: 0;
+} */
+
+.fi-1 {
+  animation: scale-down 3s ease-in-out alternate infinite;
+}
+
+.fi-2 {
+  animation: up-down 3s ease-in-out alternate infinite;
+}
+
+@keyframes scale-up {
+  to {
+    transition: translateY(20px);
+  }
+}
+
+@keyframes up-down {
+  to {
+    transition: translateY(20px);
+  }
+}
+
+@media (max-width: 892px) {
+  .form-container {
+    width: 80%;
+  }
+  .col-1 {
+    display: none;
+  }
+  .col-2 {
+    width: 100%;
+  }
+}
+
+.social-login i:hover {
+  transform: scale(0.8);
+}
+
+.input-field::placeholder {
+  color: var(--text);
+  font-size: 15px;
+}
